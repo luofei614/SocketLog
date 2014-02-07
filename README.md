@@ -55,20 +55,90 @@
         'show_included_files'=>false,//是否显示本次程序运行加载了哪些文件，默认为false
         'error_handler'=>false,//是否接管程序错误，将程序错误显示在console中，默认为false
         'force_client_id'=>'',//日志强制记录到配置的client_id,默认为空
-        'allow_client_ids'=>array()////限制允许读取日志的client_id，默认为空
-        );
+        'allow_client_ids'=>array()////限制允许读取日志的client_id，默认为空,表示所有人都可以获得日志。
+        )
         ,'set_config');
         ?>
 * optimize 参数如果设置为true， 可以在日志中看见利于优化参数，如：[运行时间：0.081346035003662s][吞吐率：12.29req/s][内存消耗：346,910.45kb] 
-* 设置client_id
+* 设置client_id:  在chrome浏览器中，可以设置插件的Client_ID ，Client_ID是你任意指定的字符串。
+![enter image description here][2]
+* 设置client_id后能实现以下功能：
+
+* 1，配置allow_client_ids 配置项，然指定的浏览器才能获得日志，这样就可以把调试代码带上线。  普通用户访问不会触发调试，不会发生日志。  开发人员访问就能看的调试日志， 这样利于找线上bug。 Client_ID 建议设置为姓名拼命加上随机字符串，这样如果有员工离职可以将其对应的client_id从配置项allow_client_ids中移除。 client_id除了姓名拼音，加上随机字符串的目的，以防别人根据你公司员工姓名猜测出client_id,获取线上的调试日志。
+* 设置allow_client_ids示例代码：
+
+        slog(array(
+        'allow_client_ids'=>array('luofei_zfH5NbLn','easy_DJq0z80H')
+        ),'set_config')
+
+* 2, 设置force_client_id配置项，让后台脚本也能输出日志到chrome。 网站有可能用了队列，一些业务逻辑通过后台脚本处理， 如果后台脚本需要调试，你也可以将日志打印到浏览器的console中， 当然后台脚本不和浏览器接触，不知道当前触发程序的是哪个浏览器，所以我们需要强制将日志打印到指定client_id的浏览器上面。 我们在后台脚本中使用SocketLog时设置force_client_id 配置项指定要强制输出浏览器的client_id 即可。
+* 示例代码:
+
+        <?php
+        include './php/SocketLog.class.php';
+        slog(array(
+        'force_client_id'=>'luofei_zfH5NbLn'
+        ),'set_config');
+        slog('test'); `
 
 
 ##对数据库进行调试
-  TODO
-##对API进行调试
-  TODO
-##对命令行脚本进行调试
-  TODO
+  * SocketLog还能对sql语句进行调试，自动对sql语句进行explain分析，显示出有性能问题的sql语句。 如下图所示。 
+  ![enter image description here][3]
+  * 图中显示出了三条sql语句 ， 第一条sql语句字体较大，是因为它又性能问题， 在sql语句的后台已经标注Using filesort。 我们还可以点击某个sql语句看到sql执行的调用栈，清楚的知道sql语句是如何被执行的，方便我们分析程序，做开源程序的二次开发。图中第三条sql语句为被点开的状态。
+  * 用slog函数打印sql语句是，第二个参数传递为mysql或mysqli的对象即可。 示例代码：
+  
 
+        $link=mysql_connect( 'localhost:3306' , 'root' , '123456' , true ) ;
+        mysql_select_db('kuaijianli',$link);
+        $sql="SELECT * FROM `user`";
+        slog($sql,$link);
+后面会以OneThink为实例再对数据库调试进行演示。
+
+  * 注意，有时候在数据比较少的情况下，mysql查询不会使用索引，explain也会提示Using filesort等性能问题， 其实这时候并不是真正有性能问题， 你需要自行进行判断，或者增加更多的数据再测试。
+
+##对API进行调试
+  网站调用了API ，如何将API程序的调试信息也打印到浏览器的console中？ 前面我们讲了一个配置 force_client_id， 能将日志强制记录到指定的浏览器。 用这种方式可以也可以将API的调试信息打印到console中，但是force_client_id 只能指定一个client_id， 如果我们的开发环境是多人共用，这种方式就不方便了。
+  其实只要将浏览器传递给网站的User-Agent 再传递给API， API程序中不用配置force_client_id， 也能识别当前访问程序的浏览器， 将日志打印到当前访问程序的浏览器， 我们需要将SDK代码稍微做一下修改。 调用API的SDK，一般是用curl写的，增加下面代码可以将浏览器的User-Agent传递到API 。 
+  
+        $headers=array(
+                'User-Agent: '.$_SERVER['HTTP_USER_AGENT']
+            );
+        curl_setopt($ch,CURLOPT_HTTPHEADER,$headers); 
+
+##分析开源程序
+
+   有了SocketLog，我们能很方便的分析开源程序，下面以OneThink为例， 大家可以在 http://www.onethink.cn/ 下载最新的OneThink程序。 安装好OneThink后，按下面步骤增加SocketLog程序。 
+
+ * 将SocketLog.class.php复制到OneThink的程序目录中，你如果没有想好将文件放到哪个子文件夹，暂且放到根目录吧。 
+ * 编辑入口文件index.php, 再代码的最前面加载SocketLog.class.php ,并设置SocketLog
+
+   
+
+        <?php
+            include './SocketLog.class.php';
+            slog(array(
+             'error_handler'=>true,
+             'optimize'=>true,
+             'show_included_files'=>true
+            ),'set_config');
+
+
+ - 编辑ThinkPHP/Library/Think/Db/Driver/Mysqli.class.php 文件， 如果你用的数据库驱动类型不是mysqli，而是mysql，那么请打开Mysql.class.php, 找到执行sql语句的地方， 这个类中得execute 方法为一个执行sql语句的方法，大约在119行处，增加代码：
+ 
+
+        slog($this->queryStr,$this->_linkID);
+
+ -  类中的query方法也是一个执行sql语句的地方， 同样需要增加上面的代码， 大约在92行增加slog($this->queryStr,$this->_linkID);
+ 
+ -  然后浏览网站看看效果： 
+ ![enter image description here][4]
+
+通过console的日志，访问每一页我们都知道程序干了什么，是一件很爽的事情。
+
+-  提示：另一种更简单的方法，因为OneThink每次执行完sql语句都会调用$this->debug， 所以我们可以把slog($this->queryStr,$this->_linkID); 直接写在 Db.class.php文件的debug方法中。 这样不管是mysqli还是mysql驱动都有效。
 
   [1]: http://sinaclouds-themepic.stor.sinaapp.com/socketlog.png
+  [2]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsetting.png
+  [3]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsql.png
+  [4]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogonethink.png
