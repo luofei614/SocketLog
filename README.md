@@ -9,10 +9,10 @@
 * 然后，启用Websocket服务器，  在命令行中运行 php php/SocketLog.server.php , 将会在本地起一个websocket服务 ，监听端口是1229
 * 在自己的程序中发送日志：
 
-    <?php
+        <?php
         include './php/SocketLog.class.php';
         slog('hello world');
-    ?>
+        ?>
 
 
 * 用slog函数发送日志， 支持多种日志类型：
