@@ -10,18 +10,19 @@
 * 在自己的程序中发送日志：
 
     <?php
-    include './php/SocketLog.class.php';
-    slog('hello world');
+        include './php/SocketLog.class.php';
+        slog('hello world');
     ?>
-    
+
+
 * 用slog函数发送日志， 支持多种日志类型：
 
-    slog('msg','log');  //一般日志
-    slog('msg','error'); //错误日志
-    slog('msg','info'); //信息日志
-    slog('msg','warn'); //警告日志
-    slog('msg','trace');// 输入日志同时会打出调用栈
-    slog('msg','log','color:red;font-size:20px;');// 自定义日志的样式，第三个参数为css样式
+        slog('msg','log');  //一般日志
+        slog('msg','error'); //错误日志
+        slog('msg','info'); //信息日志
+        slog('msg','warn'); //警告日志
+        slog('msg','trace');// 输入日志同时会打出调用栈
+        slog('msg','log','color:red;font-size:20px;');//自定义日志的样式，第三个参数为css样式
 
 ##配置
   TODO
