@@ -1,6 +1,6 @@
 #说明
  * SocketLog方便API，AJAX的调试，能将日志通过WebSocket输出到Chrome浏览器的console中
- * 它能代替ChromePHP、FirePHP等工具，ChromePHP等是通过header通信，适合AJAX调试，但不适合API调试，而且它们是通过Header通信，Chrome浏览器对传递Header大小有显示，日志如果多了，Chrome浏览器就无法支持。
+ * 它能代替ChromePHP、FirePHP等工具，ChromePHP等是通过header通信，适合AJAX调试，但不适合API调试，而且它们是通过Header通信，Chrome浏览器对传递Header大小有限制，日志如果多了，Chrome浏览器就无法支持。
  * 目录结构：
  * chrome 目录是 chrome插件，目前此插件还没有上架到chrome的商店，大家可以先以开发模式载入这个文件夹。
  * php 目录是php相关脚本。   SocketLog.server.php 是一个 Websocket服务器，  SocketLog.class.php是发生日志的类库,我们在发生日志的时候，需要载入这个类库然后调用函数slog即可。
