@@ -6,6 +6,7 @@
  * php 目录是php相关脚本。   SocketLog.server.php 是一个 Websocket服务器，  SocketLog.class.php是发生日志的类库,我们在发生日志的时候，需要载入这个类库然后调用函数slog即可。
  * 效果展示： 我们在浏览网站的时候在浏览器console中就知道程序做了什么，这对于二次开发产品十分有用。 下面效果图在console中打印出浏览discuz程序时，执行了哪些sql语句， 以及执行sql语句的调用栈。程序的warning，notice等错误信息也可以打到console中。
 ![enter image description here][1]
+
 #使用方法
  * 首先，请在chrome浏览器上安装好插件。
  * 然后，启用Websocket服务器，  在命令行中运行 php php/SocketLog.server.php , 将会在本地起一个websocket服务 ，监听端口是1229
