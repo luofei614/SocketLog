@@ -4,8 +4,11 @@ slog(array(
     //'host'=>'k.jikelin.com',
     //'port'=>1229,
     //'allow_client_ids'=>array('luofei')
-    //'show_included_files'=>true
+    'show_included_files'=>true,
+    'error_handler'=>true
 ),'set_config');
-slog('xxx','alert');
-slog('aa');
+
+//echo sdfsf;
+
+slog('xxx');
 

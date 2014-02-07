@@ -90,16 +90,15 @@ function unmask($text) {
 
 function mask($text)
 {
-	$b1 = 0x80 | (0x1 & 0x0f);
-	$length = strlen($text);
-	
-	if($length <= 125)
-		$header = pack('CC', $b1, $length);
-	elseif($length > 125 && $length < 65536)
-		$header = pack('CCn', $b1, 126, $length);
-	elseif($length >= 65536)
-		$header = pack('CCNN', $b1, 127, $length);
-	return $header.$text;
+    $b = 129; // FIN + text frame
+    $len = strlen($text);
+    if ($len < 126) {
+        return pack('CC', $b, $len) . $text;
+    } elseif ($len < 65536) {
+        return pack('CCn', $b, 126, $len) . $text;
+    } else {
+        return pack('CCNN', $b, 127, 0, $len) . $text;
+    }
 }
 
 function perform_handshaking($receved_header,$client_conn, $host, $port)
