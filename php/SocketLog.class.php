@@ -6,7 +6,7 @@ function slog($log,$type='log',$css='')
         $type=preg_replace("/_([a-zA-Z])/e", "strtoupper('\\1')", $type);
         if(method_exists('SocketLog',$type) || in_array($type,SocketLog::$log_types))
         {
-           return  call_user_func(array('SocketLog',$type),$log); 
+           return  call_user_func(array('SocketLog',$type),$log,$css); 
         }
     }
 
@@ -62,7 +62,7 @@ class SocketLog
         } 
     }
 
-    public static function trace($msg,$trace_level=1,$css='')
+    public static function trace($msg,$trace_level=2,$css='')
     {
         if(!self::check())
         {
@@ -368,7 +368,7 @@ class SocketLog
         if(fwrite($socket, $header))
         {
             $response = fread($socket, 2000);
-            $msg=json_encode($logs);
+            $msg=@json_encode($logs);
             fwrite($socket, "\x00[socket_log_start]" . $msg . "[socket_log_end]\xff" ); 
         }
      }
