@@ -153,4 +153,4 @@
   [1]: http://sinaclouds-themepic.stor.sinaapp.com/socketlog.png
   [2]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsetting.png
   [3]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsql.png
-  [4]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogonethink.png
+  [4]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogonethink2.png
