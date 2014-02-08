@@ -1,6 +1,7 @@
 <?php
 /**
  * SocketLog ，WebSocket服务端，运行： php  SocketLog.server.php 
+ * github:https://github.com/luofei614/SocketLog
  * @author luofei614<weibo.com/luofei614>
  */
 $host = 'localhost'; //host

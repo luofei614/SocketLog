@@ -1,3 +1,7 @@
+/**
+ * github: https://github.com/luofei614/SocketLog
+ * @author luofei614<weibo.com/luofei614>
+ */ 
 document.addEventListener('DOMContentLoaded', init, false);
 function init()
 {
