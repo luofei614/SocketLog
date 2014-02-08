@@ -142,9 +142,9 @@
 -  提示：另一种更简单的方法，因为OneThink每次执行完sql语句都会调用$this->debug， 所以我们可以把slog($this->queryStr,$this->_linkID); 直接写在 Db.class.php文件的debug方法中。 这样不管是mysqli还是mysql驱动都有效。
 
 ##About Me
-Author: @luofei614 新浪微博：http://weibo.com/luofei614
-快简历CTO，ThinkPHP核心开发者之一，待过新浪云计算
-如果你觉得SocketLog对你有帮助， 以后找工作就用快简历吧:http://rd.kuaijianli.com
+* Author: @luofei614 新浪微博：http://weibo.com/luofei614
+* 快简历CTO，ThinkPHP核心开发者之一，待过新浪云计算
+* 如果你觉得SocketLog对你有帮助， 以后找工作就用快简历吧:http://rd.kuaijianli.com
 
 
   [1]: http://sinaclouds-themepic.stor.sinaapp.com/socketlog.png
