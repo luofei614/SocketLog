@@ -17,7 +17,8 @@ $clients = array($socket);
 while (true) 
 {
 	$changed = $clients;
-	socket_select($changed, $null, $null, 0, 10);
+    //socket_select 的 timeout 设置为10秒，已阻塞状态等待连接，如果设置为0，非阻塞状态会导致cup偏高
+	socket_select($changed, $null, $null, 10, 10);
 	
     //检查新连接
     if (in_array($socket, $changed)) 
