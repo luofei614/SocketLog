@@ -364,8 +364,7 @@ class SocketLog
         $header.= "Connection: Upgrade\r\n";
         $header.= "Host: ".self::getConfig('host').":".self::getConfig('port')."\r\n";
         $header.= "Origin: http://foobar.com\r\n";
-        $header.= "Sec-WebSocket-Key1: 4 @1  46546xW%0l 1 5\r\n";
-        $header.= "Sec-WebSocket-Key2: 12998 5 Y3 1  .P00\r\n";
+        $header.= "Sec-WebSocket-Key: 4 @1  46546xW%0l 1 5\r\n";
         $header.= "\r\n";
         $header.= '^n:ds[4U';
         $socket = fsockopen(self::getConfig('host'), self::getConfig('port'), $errno, $errstr, 2); 
