@@ -66,7 +66,7 @@
 * show_included_files 设置为true，能显示出程序运行时加载了哪些文件，比如我们在分析开源程序时，如果不知道模板文件在那里， 往往看一下加载文件列表就知道模板文件在哪里了。
 * error_handler 设置为true，能接管报错，将错误信息显示到浏览器console， 在开发程序时notice报错能让我们快速发现bug，但是有些notice报错是不可避免的，如果让他们显示在页面中会影响网页的正常布局，那么就设置error_handler,让它显示在浏览器console中吧。  另外此功能结合php taint也是极佳的。 taint能自动检测出xss，sql注入， 如果只用php taint， 它warning报错只告诉了变量输出的地方，并不知道变量在那里赋值、怎么传递。通过SocketLog， 能看到调用栈，轻松对有问题变量进行跟踪。 更多taint的信息：http://www.laruence.com/2012/02/14/2544.html 
 * 设置client_id:  在chrome浏览器中，可以设置插件的Client_ID ，Client_ID是你任意指定的字符串。
-![enter image description here][3]
+![enter image description here][2]
 * 设置client_id后能实现以下功能：
 
 * 1，配置allow_client_ids 配置项，让指定的浏览器才能获得日志，这样就可以把调试代码带上线。  普通用户访问不会触发调试，不会发送日志。  开发人员访问就能看的调试日志， 这样利于找线上bug。 Client_ID 建议设置为姓名拼命加上随机字符串，这样如果有员工离职可以将其对应的client_id从配置项allow_client_ids中移除。 client_id除了姓名拼音，加上随机字符串的目的，以防别人根据你公司员工姓名猜测出client_id,获取线上的调试日志。
@@ -89,7 +89,7 @@
 
 ##对数据库进行调试
   * SocketLog还能对sql语句进行调试，自动对sql语句进行explain分析，显示出有性能问题的sql语句。 如下图所示。 
-  ![enter image description here][4]
+  ![enter image description here][3]
   * 图中显示出了三条sql语句 ， 第一条sql语句字体较大，是因为它又性能问题， 在sql语句的后台已经标注Using filesort。 我们还可以点击某个sql语句看到sql执行的调用栈，清楚的知道sql语句是如何被执行的，方便我们分析程序、方便做开源程序的二次开发。图中第三条sql语句为被点开的状态。
   * 用slog函数打印sql语句是，第二个参数传递为mysql或mysqli的对象即可。 示例代码：
   
@@ -137,8 +137,9 @@
  -  类中的query方法也是一个执行sql语句的地方， 同样需要增加上面的代码， 大约在92行增加slog($this->queryStr,$this->_linkID);
  
  -  然后浏览网站看看效果： 
- ![enter image description here][5]
-
+ 
+ ![enter image description here][4]
+ 
 通过console的日志，访问每一页我们都知道程序干了什么，是一件很爽的事情。
 
 -  提示：另一种更简单的方法，因为OneThink每次执行完sql语句都会调用$this->debug， 所以我们可以把slog($this->queryStr,$this->_linkID); 直接写在 Db.class.php文件的debug方法中。 这样不管是mysqli还是mysql驱动都有效。
@@ -150,6 +151,6 @@
 
 
   [1]: http://sinaclouds-themepic.stor.sinaapp.com/socketlog.png
-  [3]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsetting.png
-  [4]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsql.png
-  [5]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogonethink.png
+  [2]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsetting.png
+  [3]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsql.png
+  [4]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogonethink.png
