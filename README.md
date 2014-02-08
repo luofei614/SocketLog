@@ -150,7 +150,6 @@
 
 
   [1]: http://sinaclouds-themepic.stor.sinaapp.com/socketlog.png
-  [2]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogtaintdemo.png
   [3]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsetting.png
   [4]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsql.png
   [5]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogonethink.png
