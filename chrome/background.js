@@ -38,21 +38,25 @@ function ws_init()
 
 
     websocket.onmessage=function(event){
-        if(event.data.indexOf('SocketLog error handler')!='-1')
-        {
-            var notification = window.webkitNotifications.createNotification(
-                    'logo.png',   
-                    '注意',    
-                    '此页面有异常报错，请注意查看console 控制台中的日志'
-                    );
-            notification.ondisplay = function(event) {
-                 setTimeout(function() {
-                                 event.currentTarget.cancel();
-                             }, 5000);
-            }
-            notification.show();
-        }
 
+        var check_error=function()
+        {
+            if(event.data.indexOf('SocketLog error handler')!='-1')
+            {
+                var notification = window.webkitNotifications.createNotification(
+                        'logo.png',   
+                        '注意',    
+                        '有异常报错，请注意查看console 控制台中的日志'
+                        );
+                notification.ondisplay = function(event) {
+                     setTimeout(function() {
+                                     event.currentTarget.cancel();
+                                 }, 5000);
+                }
+                notification.show();
+            }
+        };
+       
         try
         {
                   var data=JSON.parse(event.data);
@@ -74,9 +78,9 @@ function ws_init()
                     {
                         //延迟保证日志每次都能记录
                         setTimeout(function(){
-                            chrome.tabs.sendMessage(parseInt(data.tabid),data.logs);
+                            check_error();
+                            chrome.tabs.sendMessage(tabArray[0].id,data.logs);
                         },100);
-                    
                     }
                 }
             );
@@ -90,6 +94,7 @@ function ws_init()
         }
         //延迟保证日志每次都能记录
         setTimeout(function(){
+            check_error();
             chrome.tabs.sendMessage(parseInt(data.tabid),data.logs);
         },100);
     };
