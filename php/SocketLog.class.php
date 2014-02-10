@@ -205,6 +205,10 @@ class SocketLog
         $allow_client_ids=self::getConfig('allow_client_ids');
         if(!empty($allow_client_ids))
         {
+            if (!$tabid && in_array(self::getConfig('force_client_id'), $allow_client_ids)) {
+                return true;
+            }
+            
             $client_id=self::getClientArg('client_id');
             if(!in_array($client_id,$allow_client_ids))
             {
