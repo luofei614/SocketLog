@@ -15,17 +15,22 @@ function ws_init()
 
     websocket.onerror=function(msg)
     {
+        console.log(websocket_timeout,'error');
         clearTimeout(websocket_timeout);
         websocket_timeout=setTimeout(ws_init,2000);
+        console.log(websocket_timeout,'error_new');
         localStorage.setItem('status','error');
         disable_icon();
     };
 
     websocket.onclose=function()
     {
-
-        clearTimeout(websocket_timeout);
-        websocket_timeout=setTimeout(ws_init,2000);
+        setTimeout(function(){
+            console.log(websocket_timeout,'close');
+            clearTimeout(websocket_timeout);
+            websocket_timeout=setTimeout(ws_init,2000);
+            console.log(websocket_timeout,'close_new');
+        },1000);
         localStorage.setItem('status','close');
         disable_icon();
     }
