@@ -7,7 +7,7 @@ function slog($log,$type='log',$css='')
 {
     if(is_string($type))
     {
-        $type=preg_replace("/_([a-zA-Z])/e", "strtoupper('\\1')", $type);
+        $type=preg_replace_callback('/_([a-zA-Z])/',create_function('$matches', 'return strtoupper($matches[1]);'),$type);
         if(method_exists('SocketLog',$type) || in_array($type,SocketLog::$log_types))
         {
            return  call_user_func(array('SocketLog',$type),$log,$css); 
