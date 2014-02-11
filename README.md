@@ -5,6 +5,7 @@
  * Chrome插件安装： https://chrome.google.com/webstore/detail/socketlog/apkmbfpihjhongonfcgdagliaglghcod
  * 目录结构：
  * chrome 目录是 chrome插件的源代码
+ * chrome.crx 文件是chrome插件的安装包， 如果你无法从chrome应用商店安装，可进行手动安装， 浏览器地址栏输入并打开： chrome://extensions/  ，然后将chrome.crx拖入即可安装。
  * php 目录是php相关脚本。   SocketLog.server.php 是一个 Websocket服务器，  SocketLog.class.php是发送日志的类库,我们在发送日志的时候，需要载入这个类库然后调用函数slog即可。
  * 效果展示： 我们在浏览网站的时候在浏览器console中就知道程序做了什么，这对于二次开发产品十分有用。 下面效果图在console中打印出浏览discuz程序时，执行了哪些sql语句， 以及执行sql语句的调用栈。程序的warning，notice等错误信息也可以打到console中。
 ![enter image description here][1]
