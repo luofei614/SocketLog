@@ -1,8 +1,8 @@
 #说明
- * 正在运行的API有bug，不能var_dump进行调试，因为会影响client的调用。这时候用SocketLog最好，SocketLog通过websocket将调试日志打印到浏览器的console中。你还可以用它来分析开源程序，分析SQL性能，结合taint分析程序漏洞。
+ * 正在运行的API有bug，不能var_dump进行调试，因为会影响client的调用。 将日志写到文件，查看也不方便，特别是带调用栈或大数据结构的文件日志，查看日志十分困难。 这时候用SocketLog最好，SocketLog通过websocket将调试日志打印到浏览器的console中。你还可以用它来分析开源程序，分析SQL性能，结合taint分析程序漏洞。
  * 它能代替ChromePHP、FirePHP等工具，ChromePHP等是通过header通信，适合AJAX调试，但不适合API调试，而且它们是通过Header通信，Chrome浏览器对传递Header大小有限制，日志如果多了，Chrome浏览器就无法支持。
  * SocketLog 支持SAE等特殊的运行环境，ChromePHP,FirePHP都不支持SAE，因为SAE接收不到非标准HTTP协议的Header，而ChromePHP和FirePHP传递了自定义Header
- * Chrome插件安装： https://chrome.google.com/webstore/detail/socketlog/apkmbfpihjhongonfcgdagliaglghcod
+ * Chrome插件安装： https://chrome.google.com/webstore/detail/socketlog/apkmbfpihjhongonfcgdagliaglghcod （如果不能正常访问这个页面，你可以用下面手动安装的方法进行安装）
  * 目录结构：
  * chrome 目录是 chrome插件的源代码
  * chrome.crx 文件是chrome插件的安装包， 如果你无法从chrome应用商店安装，可进行手动安装， 浏览器地址栏输入并打开： chrome://extensions/  ，然后将chrome.crx拖入即可安装。
