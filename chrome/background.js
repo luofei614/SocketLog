@@ -135,7 +135,6 @@ ws_init();
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
   function(details) {
-       
 
         var header="tabid="+details.tabId;
 
@@ -148,13 +147,17 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         header+="&client_id="+client_id;
 
-        for (var i = 0; i < details.requestHeaders.length; ++i) {
-              if (details.requestHeaders[i].name === 'User-Agent') {
-                  //将参数放在User-agent中，兼容SAE的情况
-                  details.requestHeaders[i].value+=" SocketLog("+header+")";
-                break;
-              }
-       }
+        if (details.url.indexOf('sinaapp.com') > 0) {//如果是sae的域名，目前只能根据这个判断，如果绑定了自定义域名的SAE则不行
+            for (var i = 0; i < details.requestHeaders.length; ++i) {
+                if (details.requestHeaders[i].name === 'User-Agent') {
+                    //将参数放在User-agent中，兼容SAE的情况
+                    details.requestHeaders[i].value+=" SocketLog("+header+")";
+                    break;
+                }
+            }
+        } else {
+            details.requestHeaders.push({name:'SocketLog',value:" SocketLog("+header+")"});
+        }
 
        return {requestHeaders: details.requestHeaders};
   },
