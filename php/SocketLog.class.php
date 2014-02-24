@@ -234,13 +234,20 @@ class SocketLog
     protected static function getClientArg($name)
     {
         static $args=array();
-        if(!isset($_SERVER['HTTP_USER_AGENT']))
+
+        $key = 'HTTP_USER_AGENT';
+
+        if (isset($_SERVER['HTTP_SOCKETLOG'])) {
+            $key = 'HTTP_SOCKETLOG';
+        }
+
+        if(!isset($_SERVER[$key]))
         {
             return null; 
         }
         if(empty($args))
         {
-            if(!preg_match('/SocketLog\((.*?)\)/',$_SERVER['HTTP_USER_AGENT'],$match))
+            if(!preg_match('/SocketLog\((.*?)\)/',$_SERVER[$key],$match))
             {
                 $args=array('tabid'=>null);
                 return null; 

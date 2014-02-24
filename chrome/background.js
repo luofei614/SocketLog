@@ -144,11 +144,17 @@ function disable_icon() {
 ws_init();
 
 
-    
+function url_exp(url)
+{
+    var splatParam    = /\*/g;
+    var escapeRegExp  = /[-[\]{}()+?.,\\^$#\s]/g;
+    url = url.replace(escapeRegExp, '\\$&')
+        .replace(splatParam, '(.*?)');
+    return new RegExp(url, 'i');
+} 
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
   function(details) {
-       
 
         var header="tabid="+details.tabId;
 
@@ -161,13 +167,30 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         header+="&client_id="+client_id;
 
-        for (var i = 0; i < details.requestHeaders.length; ++i) {
-              if (details.requestHeaders[i].name === 'User-Agent') {
-                  //将参数放在User-agent中，兼容SAE的情况
-                  details.requestHeaders[i].value+=" SocketLog("+header+")";
-                break;
-              }
-       }
+        var special_domain=localStorage.getItem('special_domain'); 
+        if(!special_domain)
+        {
+            special_domain='*.sinaapp.com';
+            localStorage.setItem('special_domain',special_domain); 
+        }
+        var exp=url_exp(special_domain);
+        if (exp.test(details.url)) 
+        {
+            //如果是特殊环境域名
+            for (var i = 0; i < details.requestHeaders.length; ++i) 
+            {
+                if (details.requestHeaders[i].name === 'User-Agent') 
+                {
+                    //将参数放在User-agent中，兼容SAE的情况
+                    details.requestHeaders[i].value+=" SocketLog("+header+")";
+                    break;
+                }
+            }
+        } 
+        else
+        {
+            details.requestHeaders.push({name:'SocketLog',value:" SocketLog("+header+")"});
+        }
 
        return {requestHeaders: details.requestHeaders};
   },
@@ -175,14 +198,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
   ["blocking", "requestHeaders"]);
 
 chrome.webRequest.onCompleted.addListener(function(details){
-    console.log(details);
     var online_domain=localStorage.getItem('online_domain');
     if(online_domain){
-		var splatParam    = /\*\w+/g;
-		var escapeRegExp  = /[-[\]{}()+?.,\\^$#\s]/g;
-		online_domain = online_domain.replace(escapeRegExp, '\\$&')
-			.replace(splatParam, '(.*?)');
-        var exp=new RegExp(online_domain, 'i');
+        var exp=url_exp(online_domain);
         if(exp.test(details.url))
         {
                 chrome.tabs.sendMessage(details.tabId,'online_evn');
