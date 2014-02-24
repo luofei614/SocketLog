@@ -5,6 +5,10 @@
 chrome.extension.onMessage.addListener(
 function(logs)
 {
+    if('object'!=typeof(logs))
+    {
+        return ;
+    }
     logs.forEach(function(log)
     {
             if(console[log.type])

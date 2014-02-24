@@ -5,16 +5,26 @@
   "description": "SocketLog can debug api and ajax",
   "version": "1.1",
   "permissions": [ "webRequest","webRequestBlocking", "tabs","notifications", "http://*/*", "https://*/*" ],
-  "content_scripts": [ {
+  "content_scripts": [ 
+    {
       "js": [ "log.js" ],
       "matches": [ "http://*/*", "https://*/*" ],
       "run_at": "document_start"
-   } ],
+    },
+    {
+      "js": [ "evn.js" ],
+      "matches": [ "http://*/*", "https://*/*" ],
+      "run_at": "document_start",
+      "all_frames":true
+    }
+  ],
   "background":{
     "scripts":["background.js"]
    },
+  "options_page": "options.html",
   "browser_action": {
     "default_icon": "logo.png",
     "default_popup": "popup.html"
   }
+  
 }

@@ -15,10 +15,8 @@ function ws_init()
 
     websocket.onerror=function(msg)
     {
-        console.log(websocket_timeout,'error');
         clearTimeout(websocket_timeout);
         websocket_timeout=setTimeout(ws_init,2000);
-        console.log(websocket_timeout,'error_new');
         localStorage.setItem('status','error');
         disable_icon();
     };
@@ -26,10 +24,8 @@ function ws_init()
     websocket.onclose=function()
     {
         setTimeout(function(){
-            console.log(websocket_timeout,'close');
             clearTimeout(websocket_timeout);
             websocket_timeout=setTimeout(ws_init,2000);
-            console.log(websocket_timeout,'close_new');
         },1000);
         localStorage.setItem('status','close');
         disable_icon();
@@ -60,6 +56,23 @@ function ws_init()
                 }
                 notification.show();
             }
+
+
+            if(event.data.indexOf('[NO WHERE]')!='-1')
+            {
+                var notification = window.webkitNotifications.createNotification(
+                        'logo.png',   
+                        '注意',    
+                        '存在没有WHERE语句的操作sql语句'
+                        );
+                notification.ondisplay = function(event) {
+                     setTimeout(function() {
+                                     event.currentTarget.cancel();
+                                 }, 5000);
+                }
+                notification.show();
+            }
+
         };
        
         try
@@ -160,3 +173,19 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
   },
   {urls: ["<all_urls>"]},
   ["blocking", "requestHeaders"]);
+
+chrome.webRequest.onCompleted.addListener(function(details){
+    console.log(details);
+    var online_domain=localStorage.getItem('online_domain');
+    if(online_domain){
+		var splatParam    = /\*\w+/g;
+		var escapeRegExp  = /[-[\]{}()+?.,\\^$#\s]/g;
+		online_domain = online_domain.replace(escapeRegExp, '\\$&')
+			.replace(splatParam, '(.*?)');
+        var exp=new RegExp(online_domain, 'i');
+        if(exp.test(details.url))
+        {
+                chrome.tabs.sendMessage(details.tabId,'online_evn');
+        }
+    }
+},{urls: ["<all_urls>"],types:['main_frame','sub_frame']});

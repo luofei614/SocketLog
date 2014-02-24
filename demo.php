@@ -24,5 +24,5 @@ slog('msg','log','color:red;font-size:20px;');//自定义日志的样式，第�
 //调试sql
 $link=mysql_connect( 'localhost:3306' , 'root' , '123456' , true ) ;
 mysql_select_db('kuaijianli',$link);
-$sql="SELECT * FROM `user`";
+$sql="DELETE * FROM `uxxxser`";
 slog($sql,$link);

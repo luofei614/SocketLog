@@ -118,6 +118,13 @@ class SocketLog
                   $css=self::$css['sql_warn'];
             }
         } 
+        //判断sql语句是否有where
+        if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE)/i',$sql))
+        {
+           $sql.='<---###########[NO WHERE]'; 
+           $css=self::$css['sql_warn'];
+        }
+
         self::trace($sql,2,$css);
 
     }
@@ -144,6 +151,12 @@ class SocketLog
                   $css=self::$css['sql_warn'];
             }
         } 
+        //判断sql语句是否有where
+        if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE)/i',$sql))
+        {
+           $sql.='<---###########[NO WHERE]'; 
+           $css=self::$css['sql_warn'];
+        }
         self::trace($sql,2,$css);
     }
 
@@ -369,6 +382,8 @@ class SocketLog
         $header.= "Host: ".self::getConfig('host').":".self::getConfig('port')."\r\n";
         $header.= "Origin: http://foobar.com\r\n";
         $header.= "Sec-WebSocket-Key: 4 @1  46546xW%0l 1 5\r\n";
+        $header.= "Sec-WebSocket-Key1: 4 @1  46546xW%0l 1 5\r\n";
+        $header.= "Sec-WebSocket-Key2: 12998 5 Y3 1  .P00\r\n";
         $header.= "\r\n";
         $header.= '^n:ds[4U';
         $socket = fsockopen(self::getConfig('host'), self::getConfig('port'), $errno, $errstr, 2); 
