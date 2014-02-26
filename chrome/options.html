@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no,target-densitydpi=medium-dpi">
+    <meta charset="UTF-8">
+<head>
+    <title>Chrome Logger options</title>
+    <style>
+        body {
+            font-family: helvetica, sans-serif;
+            width: 800px;
+            margin: auto;
+        }
+
+        h1 {
+            font-weight: normal;
+        }
+
+        form {
+            margin: 0;
+        }
+
+        .swatch {
+            position: relative;
+            display: inline-block;
+            border: 1px solid #555;
+            top: 2px;
+            height: 12px;
+            width: 12px;
+        }
+
+        #info {
+            color: red;
+            padding-top: 10px;
+            display: none;
+            text-align: right;
+        }
+
+        header {
+            width: 488px;
+            margin: auto;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        header h1 {
+            margin: 4px 0px 0px 0px;
+        }
+
+        header img {
+            float: left;
+            margin-right: 20px;
+        }
+
+        .content {
+            width: 400px;
+            margin: auto;
+            margin-top: 30px;
+            background: #eee;
+            -webkit-border-radius: 5px;
+            padding: 15px;
+            border: 2px solid #999;
+            overflow: hidden;
+            /*transition: all 0.5s ease-in-out;*/
+        }
+
+        p {
+            margin: 0px 0px 20px 0px;
+            color: #888;
+            padding: 0px;
+        }
+
+        input {
+            margin-bottom: 10px;
+        }
+
+        .buttons {
+            overflow: hidden;
+        }
+
+        button {
+            float: right;
+            margin-left: 10px;
+        }
+
+        p.info {
+            font-size: .8em;
+        }
+    </style>
+
+    <script src="options.js"></script>
+</head>
+<body>
+    <header>
+        <h1>SocketLog Options</h1>
+    </header>
+    <div class="content">
+        <form>
+            <label>
+                特殊环境域名：
+                <input type="text" value="*.sinapp.com" id="special_domain">
+            </label>
+            <p class="info">如果你的网站是像SAE一样，不支持传递自定义Header的环境，请在这里填写域名，多个用"|"隔开,支持通配符*</p>
+
+            <label>
+                正式环境域名：
+                <input type="text" id="online_domain">
+            </label>
+            <p class="info">设置正式环境域名后，在访问时能区别正式环境和开发环境，防止误操作，多个域名用"|"隔开,支持通配符*</p>
+
+            <div class="buttons">
+                <button id="save">保存</button>
+            </div>
+
+            <div id="info"></div>
+        </form>
+    </div>
+</body>
+</html>
