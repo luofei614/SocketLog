@@ -1,3 +1,4 @@
+
 #说明
  * 正在运行的API有bug，不能var_dump进行调试，因为会影响client的调用。 将日志写到文件，查看也不方便，特别是带调用栈或大数据结构的文件日志，查看日志十分困难。 这时候用SocketLog最好，SocketLog通过websocket将调试日志打印到浏览器的console中。你还可以用它来分析开源程序，分析SQL性能，结合taint分析程序漏洞。
  * 它能代替ChromePHP、FirePHP等工具，ChromePHP等是通过header通信，适合AJAX调试，但不适合API调试，而且它们是通过Header通信，Chrome浏览器对传递Header大小有限制，日志如果多了，Chrome浏览器就无法支持。
@@ -101,16 +102,30 @@
         slog($sql,$link);
 后面会以OneThink为实例再对数据库调试进行演示。
 
+通过上面的方法，socketlog还能自动为你检测没有where语句的sql操作，然后自动提示你。
+
   * 注意，有时候在数据比较少的情况下，mysql查询不会使用索引，explain也会提示Using filesort等性能问题， 其实这时候并不是真正有性能问题， 你需要自行进行判断，或者增加更多的数据再测试。
 
 ##对API进行调试
   网站调用了API ，如何将API程序的调试信息也打印到浏览器的console中？ 前面我们讲了一个配置 force_client_id， 能将日志强制记录到指定的浏览器。 用这种方式也可以将API的调试信息打印到console中，但是force_client_id 只能指定一个client_id， 如果我们的开发环境是多人共用，这种方式就不方便了。
   其实只要将浏览器传递给网站的User-Agent 再传递给API， API程序中不用配置force_client_id， 也能识别当前访问程序的浏览器， 将日志打印到当前访问程序的浏览器， 我们需要将SDK代码稍微做一下修改。 调用API的SDK，一般是用curl写的，增加下面代码可以将浏览器的User-Agent传递到API 。 
-  
-        $headers=array(
-                'User-Agent: '.$_SERVER['HTTP_USER_AGENT']
-            );
+
+
+        $headers=array();
+        if(isset($_SERVER['HTTP_USER_AGENT']))
+        {
+            $headers[]='User-Agent: '.$_SERVER['HTTP_USER_AGENT'];
+        }
+        if(isset($_SERVER['HTTP_SOCKETLOG']))
+        {
+            $headers[]='Socketlog: '.$_SERVER['HTTP_SOCKETLOG'];
+        }
         curl_setopt($ch,CURLOPT_HTTPHEADER,$headers); 
+
+##区分正式和开发环境
+
+  进入chrome浏览器的“工具”-->“扩展程序”  ，  点击SocketLog的“选项”进行设置。
+
 
 ##分析开源程序
 
