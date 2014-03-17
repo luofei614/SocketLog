@@ -66,6 +66,11 @@ class SocketLog
         } 
     }
 
+    public static function big($log)
+    {
+            self::log($log,'font-size:20px;color:red;');
+    }
+
     public static function trace($msg,$trace_level=2,$css='')
     {
         if(!self::check())
