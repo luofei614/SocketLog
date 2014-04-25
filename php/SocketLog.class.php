@@ -19,7 +19,7 @@ function slog($log,$type='log',$css='')
            return SocketLog::mysqlilog($log,$type);     
     }
 
-    if(is_resource($type) && 'mysql link'==get_resource_type($type))
+    if(is_resource($type) && ('mysql link'==get_resource_type($type) || 'mysql link persistent'==get_resource_type($type)))
     {
            return SocketLog::mysqllog($log,$type);     
     }
