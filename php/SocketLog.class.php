@@ -24,6 +24,12 @@ function slog($log,$type='log',$css='')
            return SocketLog::mysqllog($log,$type);     
     }
 
+
+    if(is_object($type) && 'PDO'==get_class($type))
+    {
+           return SocketLog::pdolog($log,$type);     
+    }
+
     throw new Exception($type.' is not SocketLog method'); 
 }
 
@@ -112,27 +118,13 @@ class SocketLog
             //explain
             $query = @mysqli_query($db,"EXPLAIN ".$sql);
             $arr=mysqli_fetch_array($query);
-            if(false!==strpos($arr['Extra'],'Using filesort'))
-            {
-                  $sql.=' <---################[Using filesort]';
-                  $css=self::$css['sql_warn'];
-            }
-            if(false!==strpos($arr['Extra'],'Using temporary'))
-            {
-                  $sql.=' <---################[Using temporary]';
-                  $css=self::$css['sql_warn'];
-            }
+            self::sqlexplain($arr,$sql,$css);
         } 
-        //判断sql语句是否有where
-        if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE|IN)/i',$sql))
-        {
-           $sql.='<---###########[NO WHERE]'; 
-           $css=self::$css['sql_warn'];
-        }
-
+        self::sqlwhere($sql,$css);
         self::trace($sql,2,$css);
-
     }
+
+
     public static function mysqllog($sql,$db)
     {
         if(!self::check())
@@ -145,25 +137,54 @@ class SocketLog
             //explain
             $query = @mysql_query("EXPLAIN ".$sql,$db);
             $arr=mysql_fetch_array($query);
-            if(false!==strpos($arr['Extra'],'Using filesort'))
-            {
-                  $sql.=' <---################[Using filesort]';
-                  $css=self::$css['sql_warn'];
-            }
-            if(false!==strpos($arr['Extra'],'Using temporary'))
-            {
-                  $sql.=' <---################[Using temporary]';
-                  $css=self::$css['sql_warn'];
-            }
+            self::sqlexplain($arr,$sql,$css);
         } 
+        //判断sql语句是否有where
+        self::sqlwhere($sql,$css);
+        self::trace($sql,2,$css);
+    }
+
+
+    public static function pdolog($sql,$pdo)
+    {
+        if(!self::check())
+        {
+            return ;
+        }
+        $css=self::$css['sql'];
+        if(preg_match('/^SELECT /i', $sql))
+        {
+            //explain
+            $arr=$pdo->query( "EXPLAIN ".$sql)->fetch(PDO::FETCH_ASSOC);
+            self::sqlexplain($arr,$sql,$css);
+        } 
+        self::sqlwhere($sql,$css);
+        self::trace($sql,2,$css);
+    }
+
+    private static function sqlexplain($arr,&$sql,&$css)
+    {
+        if(false!==strpos($arr['Extra'],'Using filesort'))
+        {
+              $sql.=' <---################[Using filesort]';
+              $css=self::$css['sql_warn'];
+        }
+        if(false!==strpos($arr['Extra'],'Using temporary'))
+        {
+              $sql.=' <---################[Using temporary]';
+              $css=self::$css['sql_warn'];
+        }
+    }
+    private static function sqlwhere(&$sql,&$css)
+    {
         //判断sql语句是否有where
         if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE)/i',$sql))
         {
            $sql.='<---###########[NO WHERE]'; 
            $css=self::$css['sql_warn'];
         }
-        self::trace($sql,2,$css);
     }
+
 
     /**
      * 接管报错
@@ -402,3 +423,4 @@ class SocketLog
      }
 
 }
+
