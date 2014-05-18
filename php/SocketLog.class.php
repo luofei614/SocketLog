@@ -274,6 +274,7 @@ class SocketLog
         self::$config=$config;
         if(self::check())
         {
+            self::getInstance(); //强制初始化SocketLog实例
             if($config['optimize'])
             {
                 self::$start_time=microtime(true); 
@@ -315,10 +316,6 @@ class SocketLog
 
     public function __destruct()
     {
-        if(empty(self::$logs))
-        {
-            return ;
-        }
         $time_str='';
         $memory_str='';
         if(self::$start_time)
@@ -341,40 +338,37 @@ class SocketLog
         {
             $current_uri="cmd:".implode(' ',$_SERVER['argv']);
         }
+        array_unshift(self::$logs,array(
+                'type'=>'group',
+                'msg'=>$current_uri.$time_str.$memory_str,
+                'css'=>self::$css['page']
+        ));
 
-        if(!empty(self::$logs))
+        if(self::getConfig('show_included_files'))
         {
-            array_unshift(self::$logs,array(
-                    'type'=>'group',
-                    'msg'=>$current_uri.$time_str.$memory_str,
-                    'css'=>self::$css['page']
-            ));
-
-            if(self::getConfig('show_included_files'))
-            {
-                self::$logs[]=array(
-                        'type'=>'groupCollapsed',
-                        'msg'=>'included_files',
-                        'css'=>''
-                );
-                self::$logs[]=array(
-                        'type'=>'log',
-                        'msg'=>implode("\n",get_included_files()),
-                        'css'=>''
-                );
-                self::$logs[]=array(
-                        'type'=>'groupEnd',
-                        'msg'=>'',
-                        'css'=>'',
-                );
-            }
-
+            self::$logs[]=array(
+                    'type'=>'groupCollapsed',
+                    'msg'=>'included_files',
+                    'css'=>''
+            );
+            self::$logs[]=array(
+                    'type'=>'log',
+                    'msg'=>implode("\n",get_included_files()),
+                    'css'=>''
+            );
             self::$logs[]=array(
                     'type'=>'groupEnd',
                     'msg'=>'',
                     'css'=>'',
             );
         }
+
+        self::$logs[]=array(
+                'type'=>'groupEnd',
+                'msg'=>'',
+                'css'=>'',
+        );
+
         $tabid=self::getClientArg('tabid');
         $client_id=self::getClientArg('client_id');
         if(!$client_id)
