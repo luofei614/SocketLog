@@ -337,6 +337,11 @@ class SocketLog
 
     public function __destruct()
     {
+        if(!self::check())
+        {
+            return ;
+        }
+
         $time_str='';
         $memory_str='';
         if(self::$start_time)

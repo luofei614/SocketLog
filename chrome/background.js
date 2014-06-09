@@ -44,22 +44,31 @@ function ws_init()
         {
             if(event.data.indexOf('SocketLog error handler')!='-1')
             {
-                var notification = window.webkitNotifications.createNotification(
-                        'logo.png',   
-                        '注意',    
-                        '有异常报错，请注意查看console 控制台中的日志'
-                        );
-                notification.ondisplay = function(event) {
-                     setTimeout(function() {
-                                     event.currentTarget.cancel();
-                                 }, 5000);
+                //新版chrome，没有了window.webkitNotifications 对象
+                //TODO， 考虑以后怎么进行提示
+                if(window.webkitNotifications)
+                {
+                    var notification = window.webkitNotifications.createNotification(
+                            'logo.png',   
+                            '注意',    
+                            '有异常报错，请注意查看console 控制台中的日志'
+                            );
+                    notification.ondisplay = function(event) {
+                         setTimeout(function() {
+                                         event.currentTarget.cancel();
+                                     }, 5000);
+                    }
+                    notification.show();
                 }
-                notification.show();
             }
 
 
             if(event.data.indexOf('[NO WHERE]')!='-1')
             {
+
+                //TODO， 考虑以后怎么进行提示
+                if(window.webkitNotifications)
+                {
                 var notification = window.webkitNotifications.createNotification(
                         'logo.png',   
                         '注意',    
@@ -71,6 +80,7 @@ function ws_init()
                                  }, 5000);
                 }
                 notification.show();
+                }
             }
 
         };
