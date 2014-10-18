@@ -16,10 +16,6 @@ var server = ws.createServer(function (conn) {
 //广播消息
 function broadcast(msg,path) {
     server.connections.forEach(function (conn) {
-        console.log('path:');
-        console.log(path);
-        console.log(conn.path);
-        console.log('path end');
         //通过path判断，将日志发给指定的client_id
         if(conn.path==path)
         {
