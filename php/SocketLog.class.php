@@ -335,6 +335,118 @@ class SocketLog
 
 
 
+
+    /**
+     * @param null $host - $host of socket server
+     * @param null $port - port of socket server
+     * @param string $message - 发送的消息
+     * @return bool
+     */
+
+    public static function send($host = null, $port = null, $message= "message", $address = "/")
+    {
+        $fd = fsockopen($host, $port, $errno, $errstr);
+        if (!$fd) {
+            return false;
+        } //Can't connect tot server
+        $key = self::generateKey();
+
+        $out = "GET $address HTTP/1.1\r\n";
+        $out.= "Host: http://$host:$port\r\n";
+        $out.= "Upgrade: WebSocket\r\n";
+        $out.= "Connection: Upgrade\r\n";
+        $out.= "Sec-WebSocket-Key: $key\r\n";
+        $out.= "Sec-WebSocket-Version: 13\r\n";
+        $out.= "Origin: *\r\n\r\n";
+        
+        fwrite($fd, $out);
+        // 101 switching protocols, see if echoes key
+        $result= fread($fd,1000);
+        
+        preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $result, $matches);
+        $keyAccept = trim($matches[1]);
+        $expectedResonse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
+        $handshaked = ($keyAccept === $expectedResonse) ? true : false;
+
+        if ($handshaked){
+            fwrite($fd, self::hybi10Encode($message));
+            //因为是一次发送,不用读取返回的信息,否则可能会堵塞
+            //fread($fd,1000000);  
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    private static function generateKey($length = 16)
+    {
+        $c = 0;
+        $tmp = '';
+        while ($c++ * 16 < $length) { $tmp .= md5(mt_rand(), true); }
+        return base64_encode(substr($tmp, 0, $length));
+    }
+
+
+    private static function hybi10Encode($payload, $type = 'text', $masked = true)
+    {
+        $frameHead = array();
+
+        $payloadLength = strlen($payload);
+        switch ($type) {
+            case 'text':
+                $frameHead[0] = 129;
+                break;
+            case 'close':
+                $frameHead[0] = 136;
+                break;
+            case 'ping':
+                $frameHead[0] = 137;
+                break;
+            case 'pong':
+                $frameHead[0] = 138;
+                break;
+        }
+        if ($payloadLength > 65535) {
+            $payloadLengthBin = str_split(sprintf('%064b', $payloadLength), 8);
+            $frameHead[1] = ($masked === true) ? 255 : 127;
+            for ($i = 0; $i < 8; $i++) {
+                $frameHead[$i + 2] = bindec($payloadLengthBin[$i]);
+            }
+            if ($frameHead[2] > 127) {
+                $this->close(1004);
+                return false;
+            }
+        } elseif ($payloadLength > 125) {
+            $payloadLengthBin = str_split(sprintf('%016b', $payloadLength), 8);
+            $frameHead[1] = ($masked === true) ? 254 : 126;
+            $frameHead[2] = bindec($payloadLengthBin[0]);
+            $frameHead[3] = bindec($payloadLengthBin[1]);
+        } else {
+            $frameHead[1] = ($masked === true) ? $payloadLength + 128 : $payloadLength;
+        }
+        foreach (array_keys($frameHead) as $i) {
+            $frameHead[$i] = chr($frameHead[$i]);
+        }
+        if ($masked === true) {
+            $mask = array();
+            for ($i = 0; $i < 4; $i++) {
+                $mask[$i] = chr(rand(0, 255));
+            }
+
+            $frameHead = array_merge($frameHead, $mask);
+        }
+        $frame = implode('', $frameHead);
+
+        for ($i = 0; $i < $payloadLength; $i++) {
+            $frame .= ($masked === true) ? $payload[$i] ^ $mask[$i % 4] : $payload[$i];
+        }
+
+        return $frame;
+    }
+
+
+
     public function __destruct()
     {
         if(!self::check())
@@ -407,25 +519,11 @@ class SocketLog
             'logs'=>self::$logs,
             'force_client_id'=>self::getConfig('force_client_id'),
         );
-        //发送日志
-        $header = "GET /echo HTTP/1.1\r\n";
-        $header.= "Upgrade: WebSocket\r\n";
-        $header.= "Connection: Upgrade\r\n";
-        $header.= "Host: ".self::getConfig('host').":".self::getConfig('port')."\r\n";
-        $header.= "Origin: http://foobar.com\r\n";
-        $header.= "Sec-WebSocket-Key: 4 @1  46546xW%0l 1 5\r\n";
-        $header.= "Sec-WebSocket-Key1: 4 @1  46546xW%0l 1 5\r\n";
-        $header.= "Sec-WebSocket-Key2: 12998 5 Y3 1  .P00\r\n";
-        $header.= "\r\n";
-        $header.= '^n:ds[4U';
-        $socket = fsockopen(self::getConfig('host'), self::getConfig('port'), $errno, $errstr, 2); 
-        if(fwrite($socket, $header))
-        {
-            $response = fread($socket, 2000);
-            $msg=@json_encode($logs);
-            fwrite($socket, "\x00[socket_log_start]" . $msg . "[socket_log_end]\xff" ); 
-        }
+        $msg=@json_encode($logs);
+        $address='/'.$client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
+        self::send(self::getConfig('host'),self::getConfig('port'),$msg,$address);
      }
+
 
 }
 

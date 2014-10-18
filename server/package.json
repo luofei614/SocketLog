@@ -1,0 +1,17 @@
+{
+  "name": "socketlog",
+  "version": "1.0.0",
+  "description": "website debug",
+  "main": "index.js",
+  "dependencies": {
+    "nodejs-websocket": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodejs-websocket": "^1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "luofei614",
+  "license": "ISC"
+}
