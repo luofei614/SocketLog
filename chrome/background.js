@@ -6,10 +6,21 @@ var websocket=null;
 var websocket_timeout=0;
 function ws_init()
 {
+    if(websocket)
+    {
+        //避免重复监听
+        websocket.close(); 
+    }
     var address=localStorage.getItem('address');
+    var client_id=localStorage.getItem('client_id');
     if(!address)
     {
         address="ws://localhost:1229"; 
+    }
+    if(client_id)
+    {
+        //client_id作为地址
+        address+='/'+client_id;     
     }
     websocket=new WebSocket(address);
 
@@ -44,43 +55,34 @@ function ws_init()
         {
             if(event.data.indexOf('SocketLog error handler')!='-1')
             {
-                //新版chrome，没有了window.webkitNotifications 对象
-                //TODO， 考虑以后怎么进行提示
-                if(window.webkitNotifications)
-                {
-                    var notification = window.webkitNotifications.createNotification(
-                            'logo.png',   
-                            '注意',    
-                            '有异常报错，请注意查看console 控制台中的日志'
-                            );
-                    notification.ondisplay = function(event) {
-                         setTimeout(function() {
-                                         event.currentTarget.cancel();
-                                     }, 5000);
-                    }
-                    notification.show();
-                }
+               var opt = {
+                  type: "basic",
+                  title: "注意",
+                  message: "有异常报错，请注意查看console 控制台中的日志",
+                  iconUrl: "logo.png"
+                };
+                chrome.notifications.create('',opt,function(id){
+                    setTimeout(function(){
+                        chrome.notifications.clear(id,function(){});
+                    },3000);
+                });
+
             }
 
 
             if(event.data.indexOf('[NO WHERE]')!='-1')
             {
-
-                //TODO， 考虑以后怎么进行提示
-                if(window.webkitNotifications)
-                {
-                var notification = window.webkitNotifications.createNotification(
-                        'logo.png',   
-                        '注意',    
-                        '存在没有WHERE语句的操作sql语句'
-                        );
-                notification.ondisplay = function(event) {
-                     setTimeout(function() {
-                                     event.currentTarget.cancel();
-                                 }, 5000);
-                }
-                notification.show();
-                }
+                var opt = {
+                  type: "basic",
+                  title: "注意",
+                  message: "存在没有WHERE语句的操作sql语句",
+                  iconUrl: "logo.png"
+                };
+                chrome.notifications.create('',opt,function(id){
+                    setTimeout(function(){
+                        chrome.notifications.clear(id,function(){});
+                    },3000);
+                });
             }
 
         };
@@ -130,9 +132,6 @@ function ws_init()
 
 function ws_restart()
 {
-    if(websocket){ 
-        websocket.close(); 
-    }
     ws_init();
 }
 
