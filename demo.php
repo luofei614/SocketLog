@@ -1,5 +1,6 @@
 <?php
 include './php/SocketLog.class.php';
+
 //配置
 slog(array(
 'host'=>'localhost',//websocket服务器地址，默认localhost
