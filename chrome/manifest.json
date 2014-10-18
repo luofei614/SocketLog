@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
 
   "name": "SocketLog",
   "description": "SocketLog是FirePHP和ChromePHP的替代者，不仅能做ajax调试，还能做API调试。",
