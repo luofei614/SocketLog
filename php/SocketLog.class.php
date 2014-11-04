@@ -84,9 +84,7 @@ class SocketLog
             return ;
         }
         self::groupCollapsed($msg,$css);
-        $traces=version_compare(PHP_VERSION, '5.3.6','>=')
-            ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)
-            : debug_backtrace(false);
+        $traces=debug_backtrace(false);
         $traces=array_reverse($traces);
         $max=count($traces)-$trace_level;
         for($i=0;$i<$max;$i++){
