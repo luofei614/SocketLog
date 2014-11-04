@@ -129,7 +129,7 @@
 
 ##分析开源程序
 
-   有了SocketLog，我们能很方便的分析开源程序，下面以OneThink为例， 大家可以在 http://www.onethink.cn/ 下载最新的OneThink程序。 安装好OneThink后，按下面步骤增加SocketLog程序。 
+   有了SocketLog，我们能很方便的分析开源程序，下面以OneThink为例， 大家可以在 http://www.topthink.com/topic/2228.html 下载最新的OneThink程序。 安装好OneThink后，按下面步骤增加SocketLog程序。 
 
  * 将SocketLog.class.php复制到OneThink的程序目录中，你如果没有想好将文件放到哪个子文件夹，暂且放到根目录吧。 
  * 编辑入口文件index.php, 再代码的最前面加载SocketLog.class.php ,并设置SocketLog
@@ -145,12 +145,12 @@
             ),'set_config');
 
 
- - 编辑ThinkPHP/Library/Think/Db/Driver/Mysqli.class.php 文件， 如果你用的数据库驱动类型不是mysqli，而是mysql，那么请打开Mysql.class.php, 找到执行sql语句的地方， 这个类中得execute 方法为一个执行sql语句的方法，大约在119行处，增加代码：
+ - 编辑ThinkPHP/Library/Think/Db/Driver.class.php 文件，在这个类中的execute 方法为一个执行sql语句的方法，增加代码：
  
 
         slog($this->queryStr,$this->_linkID);
 
- -  类中的query方法也是一个执行sql语句的地方， 同样需要增加上面的代码， 大约在92行增加slog($this->queryStr,$this->_linkID);
+ -  类中的query方法也是一个执行sql语句的地方， 同样需要增加上面的代码
  
  -  然后浏览网站看看效果： 
  
