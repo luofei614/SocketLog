@@ -197,6 +197,7 @@ class SocketLog
         }
         
         set_error_handler(array('SocketLog','error_handler')); 
+        register_shutdown_function(array('SocketLog','fatalError'));
     } 
 
     public static function error_handler($errno, $errstr, $errfile, $errline)
@@ -211,11 +212,27 @@ class SocketLog
             case E_RECOVERABLE_ERROR: $severity = 'E_RECOVERABLE_ERROR'; break;
             case E_DEPRECATED: $severity = 'E_DEPRECATED'; break;
             case E_USER_DEPRECATED: $severity = 'E_USER_DEPRECATED'; break;
+            case E_ERROR: $severity = 'E_ERR'; break;
+            case E_PARSE: $severity = 'E_PARSE'; break;
+            case E_CORE_ERROR: $severity = 'E_CORE_ERROR'; break;
+            case E_COMPILE_ERROR: $severity = 'E_COMPILE_ERROR'; break;
+            case E_USER_ERROR: $severity = 'E_USER_ERROR'; break; 
             default: $severity= 'E_UNKNOWN_ERROR_'.$errno; break;
         }
         $msg="{$severity}: {$errstr} in {$errfile} on line {$errline} -- SocketLog error handler";
         self::trace($msg,2,self::$css['error_handler']);
     }
+
+    public static function fatalError() 
+    {
+        // 保存日志记录
+        if ($e = error_get_last()) 
+        {
+                self::error_handler($e['type'],$e['message'],$e['file'],$e['line']);
+                self::sendLog();//此类终止不会调用类的 __destruct 方法，所以此处手动sendLog
+        }
+    }
+
 
 
     public static function getInstance()
@@ -357,7 +374,7 @@ class SocketLog
         return true;
     }
 
-    public function __destruct()
+    public static function sendLog()
     {
         if(!self::check())
         {
@@ -435,8 +452,13 @@ class SocketLog
         $msg=@json_encode($logs);
         $address='/'.$client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
         self::send(self::getConfig('host'),$msg,$address);
-     }
+    
+    }
 
+    public function __destruct()
+    {
+        self::sendLog();
+    }
 
 }
 
