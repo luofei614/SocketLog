@@ -38,8 +38,12 @@ var httpServer = http.createServer(function(request, response){
             console.log(requestBody);
             //发送日志
             broadcast(requestBody,request.url);
+            response.end('sucess');
         });
      }
-     response.end('sucess');
+     else
+     {
+         response.end('please request with POST method');
+     }
 });
 httpServer.listen(1116);
