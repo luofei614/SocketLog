@@ -4,7 +4,6 @@ include './php/SocketLog.class.php';
 //配置
 slog(array(
 'host'=>'localhost',//websocket服务器地址，默认localhost
-'port'=>'1229',//websocket服务器端口，默认端口是1229
 'optimize'=>false,//是否显示利于优化的参数，如果运行时间，消耗内存等，默认为false
 'show_included_files'=>false,//是否显示本次程序运行加载了哪些文件，默认为false
 'error_handler'=>false,//是否接管程序错误，将程序错误显示在console中，默认为false

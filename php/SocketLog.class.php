@@ -37,13 +37,13 @@ class SocketLog
 {
     public static $start_time=0;
     public static $start_memory=0;
+    public static $port=1116;//SocketLog 服务的http的端口号
     public static $log_types=array('log','info','error','warn','table','group','groupCollapsed','groupEnd','alert');
 
     protected static $_instance;
 
     protected static $config=array(
         'host'=>'localhost',
-        'port'=>'1229',
         //是否显示利于优化的参数，如果允许时间，消耗内存等
         'optimize'=>false,
         'show_included_files'=>false,
@@ -178,7 +178,7 @@ class SocketLog
     private static function sqlwhere(&$sql,&$css)
     {
         //判断sql语句是否有where
-        if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE)/i',$sql))
+        if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE|IN)/i',$sql))
         {
            $sql.='<---###########[NO WHERE]'; 
            $css=self::$css['sql_warn'];
@@ -197,6 +197,7 @@ class SocketLog
         }
         
         set_error_handler(array('SocketLog','error_handler')); 
+        register_shutdown_function(array('SocketLog','fatalError'));
     } 
 
     public static function error_handler($errno, $errstr, $errfile, $errline)
@@ -211,11 +212,27 @@ class SocketLog
             case E_RECOVERABLE_ERROR: $severity = 'E_RECOVERABLE_ERROR'; break;
             case E_DEPRECATED: $severity = 'E_DEPRECATED'; break;
             case E_USER_DEPRECATED: $severity = 'E_USER_DEPRECATED'; break;
+            case E_ERROR: $severity = 'E_ERR'; break;
+            case E_PARSE: $severity = 'E_PARSE'; break;
+            case E_CORE_ERROR: $severity = 'E_CORE_ERROR'; break;
+            case E_COMPILE_ERROR: $severity = 'E_COMPILE_ERROR'; break;
+            case E_USER_ERROR: $severity = 'E_USER_ERROR'; break; 
             default: $severity= 'E_UNKNOWN_ERROR_'.$errno; break;
         }
         $msg="{$severity}: {$errstr} in {$errfile} on line {$errline} -- SocketLog error handler";
         self::trace($msg,2,self::$css['error_handler']);
     }
+
+    public static function fatalError() 
+    {
+        // 保存日志记录
+        if ($e = error_get_last()) 
+        {
+                self::error_handler($e['type'],$e['message'],$e['file'],$e['line']);
+                self::sendLog();//此类终止不会调用类的 __destruct 方法，所以此处手动sendLog
+        }
+    }
+
 
 
     public static function getInstance()
@@ -333,121 +350,31 @@ class SocketLog
         );
     }
 
-
-
-
     /**
      * @param null $host - $host of socket server
-     * @param null $port - port of socket server
      * @param string $message - 发送的消息
+     * @param string $address - 地址
      * @return bool
      */
-
-    public static function send($host = null, $port = null, $message= "message", $address = "/")
+    public static function send($host,$message='',$address='/')
     {
-        $fd = fsockopen($host, $port, $errno, $errstr);
-        if (!$fd) {
-            return false;
-        } //Can't connect tot server
-        $key = self::generateKey();
-
-        $out = "GET $address HTTP/1.1\r\n";
-        $out.= "Host: http://$host:$port\r\n";
-        $out.= "Upgrade: WebSocket\r\n";
-        $out.= "Connection: Upgrade\r\n";
-        $out.= "Sec-WebSocket-Key: $key\r\n";
-        $out.= "Sec-WebSocket-Version: 13\r\n";
-        $out.= "Origin: *\r\n\r\n";
-        
-        fwrite($fd, $out);
-        // 101 switching protocols, see if echoes key
-        $result= fread($fd,1000);
-        
-        preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $result, $matches);
-        $keyAccept = trim($matches[1]);
-        $expectedResonse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
-        $handshaked = ($keyAccept === $expectedResonse) ? true : false;
-
-        if ($handshaked){
-            fwrite($fd, self::hybi10Encode($message));
-            //因为是一次发送,不用读取返回的信息,否则可能会堵塞
-            //fread($fd,1000000);  
-            return true;
-        } else {
-            return false;
-        }
+        $url='http://'.$host.':'.self::$port.$address;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $headers=array(
+                 "Content-Type: application/json;charset=UTF-8"
+        );
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);//设置header
+        $txt = curl_exec($ch);
+        return true;
     }
 
-
-    private static function generateKey($length = 16)
-    {
-        $c = 0;
-        $tmp = '';
-        while ($c++ * 16 < $length) { $tmp .= md5(mt_rand(), true); }
-        return base64_encode(substr($tmp, 0, $length));
-    }
-
-
-    private static function hybi10Encode($payload, $type = 'text', $masked = true)
-    {
-        $frameHead = array();
-
-        $payloadLength = strlen($payload);
-        switch ($type) {
-            case 'text':
-                $frameHead[0] = 129;
-                break;
-            case 'close':
-                $frameHead[0] = 136;
-                break;
-            case 'ping':
-                $frameHead[0] = 137;
-                break;
-            case 'pong':
-                $frameHead[0] = 138;
-                break;
-        }
-        if ($payloadLength > 65535) {
-            $payloadLengthBin = str_split(sprintf('%064b', $payloadLength), 8);
-            $frameHead[1] = ($masked === true) ? 255 : 127;
-            for ($i = 0; $i < 8; $i++) {
-                $frameHead[$i + 2] = bindec($payloadLengthBin[$i]);
-            }
-            if ($frameHead[2] > 127) {
-                $this->close(1004);
-                return false;
-            }
-        } elseif ($payloadLength > 125) {
-            $payloadLengthBin = str_split(sprintf('%016b', $payloadLength), 8);
-            $frameHead[1] = ($masked === true) ? 254 : 126;
-            $frameHead[2] = bindec($payloadLengthBin[0]);
-            $frameHead[3] = bindec($payloadLengthBin[1]);
-        } else {
-            $frameHead[1] = ($masked === true) ? $payloadLength + 128 : $payloadLength;
-        }
-        foreach (array_keys($frameHead) as $i) {
-            $frameHead[$i] = chr($frameHead[$i]);
-        }
-        if ($masked === true) {
-            $mask = array();
-            for ($i = 0; $i < 4; $i++) {
-                $mask[$i] = chr(rand(0, 255));
-            }
-
-            $frameHead = array_merge($frameHead, $mask);
-        }
-        $frame = implode('', $frameHead);
-
-        for ($i = 0; $i < $payloadLength; $i++) {
-            $frame .= ($masked === true) ? $payload[$i] ^ $mask[$i % 4] : $payload[$i];
-        }
-
-        return $frame;
-    }
-
-
-
-    public function __destruct()
+    public static function sendLog()
     {
         if(!self::check())
         {
@@ -524,9 +451,14 @@ class SocketLog
         );
         $msg=@json_encode($logs);
         $address='/'.$client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
-        self::send(self::getConfig('host'),self::getConfig('port'),$msg,$address);
-     }
+        self::send(self::getConfig('host'),$msg,$address);
+    
+    }
 
+    public function __destruct()
+    {
+        self::sendLog();
+    }
 
 }
 
