@@ -178,7 +178,7 @@ class SocketLog
     private static function sqlwhere(&$sql,&$css)
     {
         //判断sql语句是否有where
-        if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE)/i',$sql))
+        if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE|IN)/i',$sql))
         {
            $sql.='<---###########[NO WHERE]'; 
            $css=self::$css['sql_warn'];
