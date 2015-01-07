@@ -155,8 +155,12 @@ class SocketLog
         if(preg_match('/^SELECT /i', $sql))
         {
             //explain
-            $arr=$pdo->query( "EXPLAIN ".$sql)->fetch(PDO::FETCH_ASSOC);
-            self::sqlexplain($arr,$sql,$css);
+             $obj=$pdo->query( "EXPLAIN ".$sql);
+             if(is_object($obj) && method_exists($obj,'fetch'))
+             {
+                 $arr=$obj->fetch(PDO::FETCH_ASSOC);
+                 self::sqlexplain($arr,$sql,$css);
+             }
         } 
         self::sqlwhere($sql,$css);
         self::trace($sql,2,$css);
