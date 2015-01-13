@@ -1,7 +1,7 @@
 
 #说明
 
-SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog来做微信调试， 我们在做微信API开发的时候，如果API有bug，微信只提示“改公众账号暂时无法提供服务，请稍候再试” ，我们根本不知道API出来什么问题。  有了SocketLog就不一样了， 我们可以知道微信给API传递了哪些参数， 程序有错误我们也能看见错误信息
+SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog来做微信调试， 我们在做微信API开发的时候，如果API有bug，微信只提示“改公众账号暂时无法提供服务，请稍候再试” ，我们根本不知道API出来什么问题。  有了SocketLog就不一样了， 我们可以知道微信给API传递了哪些参数， 程序有错误我们也能看见错误信息(下方有张图片，可能加载慢，请耐心等待一下)
 
 ![微信调试](http://sinaclouds-themepic.stor.sinaapp.com/weixin.png)
 
