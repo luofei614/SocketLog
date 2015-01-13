@@ -1,8 +1,12 @@
 
 #说明
- * 正在运行的API有bug，不能var_dump进行调试，因为会影响client的调用。 将日志写到文件，查看也不方便，特别是带调用栈或大数据结构的文件日志，查看日志十分困难。 这时候用SocketLog最好，SocketLog通过websocket将调试日志打印到浏览器的console中。你还可以用它来分析开源程序，分析SQL性能，结合taint分析程序漏洞。
- * 它能代替ChromePHP、FirePHP等工具，ChromePHP等是通过header通信，适合AJAX调试，但不适合API调试，而且它们是通过Header通信，Chrome浏览器对传递Header大小有限制，日志如果多了，Chrome浏览器就无法支持。
- * SocketLog 支持SAE等特殊的运行环境，ChromePHP,FirePHP都不支持SAE，因为SAE接收不到非标准HTTP协议的Header，而ChromePHP和FirePHP传递了自定义Header
+
+SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog来做微信调试， 我们在做微信API开发的时候，如果API有bug，微信只提示“改公众账号暂时无法提供服务，请稍候再试” ，我们根本不知道API出来什么问题。  有了SocketLog就不一样了， 我们可以知道微信给API传递了哪些参数， 程序有错误我们也能看见错误信息
+
+![微信调试](http://sinaclouds-themepic.stor.sinaapp.com/weixin.png)
+
+
+ *   正在运行的API有bug，不能var_dump进行调试，因为会影响client的调用。 将日志写到文件，查看也不方便，特别是带调用栈或大数据结构的文件日志，查看日志十分困难。 这时候用SocketLog最好，SocketLog通过websocket将调试日志打印到浏览器的console中。你还可以用它来分析开源程序，分析SQL性能，结合taint分析程序漏洞。
  * Chrome插件安装： https://chrome.google.com/webstore/detail/socketlog/apkmbfpihjhongonfcgdagliaglghcod （如果不能正常访问这个页面，你可以用下面手动安装的方法进行安装）
  * 目录结构：
  * chrome 目录是 chrome插件的源代码
