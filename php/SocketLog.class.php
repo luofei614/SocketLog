@@ -200,8 +200,8 @@ class SocketLog
             return ;
         }
         
-        set_error_handler(array('SocketLog','error_handler')); 
-        register_shutdown_function(array('SocketLog','fatalError'));
+        set_error_handler(array(__CLASS__,'error_handler')); 
+        register_shutdown_function(array(__CLASS__,'fatalError'));
     } 
 
     public static function error_handler($errno, $errstr, $errfile, $errline)
@@ -395,7 +395,7 @@ class SocketLog
         }
         if(self::$start_memory)
         {
-            $memory_use=number_format(self::$start_memory-memory_get_usage()/1024,2);
+            $memory_use=number_format(memory_get_usage()-self::$start_memory/1024,2);
             $memory_str="[内存消耗：{$memory_use}kb]"; 
         }
 
