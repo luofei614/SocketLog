@@ -168,6 +168,7 @@ class SocketLog
 
     private static function sqlexplain($arr,&$sql,&$css)
     {
+        $arr = array_change_key_case($arr, CASE_LOWER);
         if(false!==strpos($arr['extra'],'Using filesort'))
         {
               $sql.=' <---################[Using filesort]';
