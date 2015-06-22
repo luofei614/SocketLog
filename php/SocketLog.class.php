@@ -2,7 +2,7 @@
 /**
  * github: https://github.com/luofei614/SocketLog
  * @author luofei614<weibo.com/luofei614>
- */ 
+ */
 function slog($log,$type='log',$css='')
 {
     if(is_string($type))
@@ -10,27 +10,27 @@ function slog($log,$type='log',$css='')
         $type=preg_replace_callback('/_([a-zA-Z])/',create_function('$matches', 'return strtoupper($matches[1]);'),$type);
         if(method_exists('SocketLog',$type) || in_array($type,SocketLog::$log_types))
         {
-           return  call_user_func(array('SocketLog',$type),$log,$css); 
+           return  call_user_func(array('SocketLog',$type),$log,$css);
         }
     }
 
     if(is_object($type) && 'mysqli'==get_class($type))
     {
-           return SocketLog::mysqlilog($log,$type);     
+           return SocketLog::mysqlilog($log,$type);
     }
 
     if(is_resource($type) && ('mysql link'==get_resource_type($type) || 'mysql link persistent'==get_resource_type($type)))
     {
-           return SocketLog::mysqllog($log,$type);     
+           return SocketLog::mysqllog($log,$type);
     }
 
 
     if(is_object($type) && 'PDO'==get_class($type))
     {
-           return SocketLog::pdolog($log,$type);     
+           return SocketLog::pdolog($log,$type);
     }
 
-    throw new Exception($type.' is not SocketLog method'); 
+    throw new Exception($type.' is not SocketLog method');
 }
 
 class SocketLog
@@ -68,8 +68,8 @@ class SocketLog
         if(in_array($method,self::$log_types))
         {
             array_unshift($args,$method);
-            return call_user_func_array(array(self::getInstance(),'record'),$args); 
-        } 
+            return call_user_func_array(array(self::getInstance(),'record'),$args);
+        }
     }
 
     public static function big($log)
@@ -113,13 +113,13 @@ class SocketLog
         }
 
         $css=self::$css['sql'];
-        if(preg_match('/^SELECT /i', $sql)) 
+        if(preg_match('/^SELECT /i', $sql))
         {
             //explain
             $query = @mysqli_query($db,"EXPLAIN ".$sql);
             $arr=mysqli_fetch_array($query);
             self::sqlexplain($arr,$sql,$css);
-        } 
+        }
         self::sqlwhere($sql,$css);
         self::trace($sql,2,$css);
     }
@@ -138,7 +138,7 @@ class SocketLog
             $query = @mysql_query("EXPLAIN ".$sql,$db);
             $arr=mysql_fetch_array($query);
             self::sqlexplain($arr,$sql,$css);
-        } 
+        }
         //判断sql语句是否有where
         self::sqlwhere($sql,$css);
         self::trace($sql,2,$css);
@@ -155,25 +155,30 @@ class SocketLog
         if(preg_match('/^SELECT /i', $sql))
         {
             //explain
-             $obj=$pdo->query( "EXPLAIN ".$sql);
-             if(is_object($obj) && method_exists($obj,'fetch'))
-             {
-                 $arr=$obj->fetch(PDO::FETCH_ASSOC);
-                 self::sqlexplain($arr,$sql,$css);
-             }
-        } 
+            try {
+                $obj=$pdo->query( "EXPLAIN ".$sql);
+                if(is_object($obj) && method_exists($obj,'fetch'))
+                {
+                    $arr=$obj->fetch(PDO::FETCH_ASSOC);
+                    self::sqlexplain($arr,$sql,$css);
+                }
+            } catch (Exception $e) {
+
+            }
+        }
         self::sqlwhere($sql,$css);
         self::trace($sql,2,$css);
     }
 
     private static function sqlexplain($arr,&$sql,&$css)
     {
-        if(false!==strpos($arr['Extra'],'Using filesort'))
+        $arr = array_change_key_case($arr, CASE_LOWER);
+        if(false!==strpos($arr['extra'],'Using filesort'))
         {
               $sql.=' <---################[Using filesort]';
               $css=self::$css['sql_warn'];
         }
-        if(false!==strpos($arr['Extra'],'Using temporary'))
+        if(false!==strpos($arr['extra'],'Using temporary'))
         {
               $sql.=' <---################[Using temporary]';
               $css=self::$css['sql_warn'];
@@ -184,7 +189,7 @@ class SocketLog
         //判断sql语句是否有where
         if(preg_match('/^UPDATE |DELETE /i',$sql) && !preg_match('/WHERE.*(=|>|<|LIKE|IN)/i',$sql))
         {
-           $sql.='<---###########[NO WHERE]'; 
+           $sql.='<---###########[NO WHERE]';
            $css=self::$css['sql_warn'];
         }
     }
@@ -192,17 +197,17 @@ class SocketLog
 
     /**
      * 接管报错
-     */ 
+     */
     public static function registerErrorHandler()
     {
         if(!self::check())
         {
             return ;
         }
-        
-        set_error_handler(array(__CLASS__,'error_handler')); 
+
+        set_error_handler(array(__CLASS__,'error_handler'));
         register_shutdown_function(array(__CLASS__,'fatalError'));
-    } 
+    }
 
     public static function error_handler($errno, $errstr, $errfile, $errline)
     {
@@ -220,17 +225,17 @@ class SocketLog
             case E_PARSE: $severity = 'E_PARSE'; break;
             case E_CORE_ERROR: $severity = 'E_CORE_ERROR'; break;
             case E_COMPILE_ERROR: $severity = 'E_COMPILE_ERROR'; break;
-            case E_USER_ERROR: $severity = 'E_USER_ERROR'; break; 
+            case E_USER_ERROR: $severity = 'E_USER_ERROR'; break;
             default: $severity= 'E_UNKNOWN_ERROR_'.$errno; break;
         }
         $msg="{$severity}: {$errstr} in {$errfile} on line {$errline} -- SocketLog error handler";
         self::trace($msg,2,self::$css['error_handler']);
     }
 
-    public static function fatalError() 
+    public static function fatalError()
     {
         // 保存日志记录
-        if ($e = error_get_last()) 
+        if ($e = error_get_last())
         {
                 self::error_handler($e['type'],$e['message'],$e['file'],$e['line']);
                 self::sendLog();//此类终止不会调用类的 __destruct 方法，所以此处手动sendLog
@@ -246,7 +251,7 @@ class SocketLog
         }
         return self::$_instance;
     }
-   
+
     protected static function _log($type,$logs,$css='')
     {
         self::getInstance()->record($type,$logs,$css);
@@ -259,7 +264,7 @@ class SocketLog
          //是否记录日志的检查
         if(!$tabid && !self::getConfig('force_client_id'))
         {
-            return false; 
+            return false;
         }
         //用户认证
         $allow_client_ids=self::getConfig('allow_client_ids');
@@ -268,7 +273,7 @@ class SocketLog
             if (!$tabid && in_array(self::getConfig('force_client_id'), $allow_client_ids)) {
                 return true;
             }
-            
+
             $client_id=self::getClientArg('client_id');
             if(!in_array($client_id,$allow_client_ids))
             {
@@ -290,20 +295,20 @@ class SocketLog
 
         if(!isset($_SERVER[$key]))
         {
-            return null; 
+            return null;
         }
         if(empty($args))
         {
             if(!preg_match('/SocketLog\((.*?)\)/',$_SERVER[$key],$match))
             {
                 $args=array('tabid'=>null);
-                return null; 
+                return null;
             }
             parse_str($match[1],$args);
         }
         if(isset($args[$name]))
         {
-            return $args[$name]; 
+            return $args[$name];
         }
         return null;
     }
@@ -312,20 +317,20 @@ class SocketLog
     //设置配置
     public static function  setConfig($config)
     {
-        $config=array_merge(self::$config,$config); 
+        $config=array_merge(self::$config,$config);
         self::$config=$config;
         if(self::check())
         {
             self::getInstance(); //强制初始化SocketLog实例
             if($config['optimize'])
             {
-                self::$start_time=microtime(true); 
-                self::$start_memory=memory_get_usage(); 
+                self::$start_time=microtime(true);
+                self::$start_memory=memory_get_usage();
             }
 
             if($config['error_handler'])
             {
-                self::registerErrorHandler(); 
+                self::registerErrorHandler();
             }
         }
     }
@@ -389,14 +394,14 @@ class SocketLog
         $memory_str='';
         if(self::$start_time)
         {
-            $runtime=microtime(true)-self::$start_time; 
+            $runtime=microtime(true)-self::$start_time;
             $reqs=number_format(1/$runtime,2);
             $time_str="[运行时间：{$runtime}s][吞吐率：{$reqs}req/s]";
         }
         if(self::$start_memory)
         {
             $memory_use=number_format(memory_get_usage()-self::$start_memory/1024,2);
-            $memory_str="[内存消耗：{$memory_use}kb]"; 
+            $memory_str="[内存消耗：{$memory_use}kb]";
         }
 
         if(isset($_SERVER['HTTP_HOST']))
@@ -441,11 +446,11 @@ class SocketLog
         $tabid=self::getClientArg('tabid');
         if(!$client_id=self::getClientArg('client_id'))
         {
-            $client_id=''; 
+            $client_id='';
         }
         if($force_client_id=self::getConfig('force_client_id'))
         {
-            $client_id=$force_client_id; 
+            $client_id=$force_client_id;
         }
         $logs=array(
             'tabid'=>$tabid,
@@ -456,7 +461,7 @@ class SocketLog
         $msg=@json_encode($logs);
         $address='/'.$client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
         self::send(self::getConfig('host'),$msg,$address);
-    
+
     }
 
     public function __destruct()
