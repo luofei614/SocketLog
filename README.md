@@ -3,7 +3,7 @@
 
 SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog来做微信调试， 我们在做微信API开发的时候，如果API有bug，微信只提示“改公众账号暂时无法提供服务，请稍候再试” ，我们根本不知道API出来什么问题。  有了SocketLog就不一样了， 我们可以知道微信给API传递了哪些参数， 程序有错误我们也能看见错误信息(下方有张图片，可能加载慢，请耐心等待一下)
 
-![微信调试](http://sinaclouds-themepic.stor.sinaapp.com/weixin.png)
+![微信调试](https://raw.githubusercontent.com/luofei614/SocketLog/master/screenshots/weixin.png)
 
 
  *   正在运行的API有bug，不能var_dump进行调试，因为会影响client的调用。 将日志写到文件，查看也不方便，特别是带调用栈或大数据结构的文件日志，查看日志十分困难。 这时候用SocketLog最好，SocketLog通过websocket将调试日志打印到浏览器的console中。你还可以用它来分析开源程序，分析SQL性能，结合taint分析程序漏洞。
@@ -166,11 +166,10 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
 
 ##About Me
 * Author: @luofei614 新浪微博：http://weibo.com/luofei614
-* 竞鹿（JobDeer）的CTO，ThinkPHP核心开发者之一，待过新浪云计算
-* 如果你觉得SocketLog对你有帮助， 以后找工作就用JobDeer吧:http://www.jobdeer.com
+* 三生社群CTO，ThinkPHP核心开发者之一，待过新浪云计算
 
 
-  [1]: http://sinaclouds-themepic.stor.sinaapp.com/socketlog.png
-  [2]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsetting.png
-  [3]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogsql.png
-  [4]: http://sinaclouds-themepic.stor.sinaapp.com/socketlogonethink2.png
+  [1]: https://github.com/luofei614/SocketLog/raw/master/screenshots/discuz.png
+  [2]: https://github.com/luofei614/SocketLog/raw/master/screenshots/socketlog.png
+  [3]: https://github.com/luofei614/SocketLog/raw/master/screenshots/sql.png
+  [4]: https://github.com/luofei614/SocketLog/raw/master/screenshots/onethink.png
