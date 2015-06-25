@@ -2,11 +2,6 @@ var ws = require("nodejs-websocket");
 var http = require('http');
 var server = ws.createServer(function (conn) {
     console.log("New connection");
-    conn.on("text", function (str) {
-        //老版本的发送日志的方法。 新版可以去掉
-        console.log(str);
-        broadcast(str,conn.path);
-    });
     conn.on("close", function (code, reason) {
         console.log("Connection closed");
     });
@@ -47,3 +42,5 @@ var httpServer = http.createServer(function(request, response){
      }
 });
 httpServer.listen(1116);
+
+console.log('SocketLog started success');
