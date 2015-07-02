@@ -17,7 +17,7 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
 
 #使用方法
  * 首先，请在chrome浏览器上安装好插件。
- * 然后，启用Websocket服务，该服务是nodejs写的，在server目录下，请先确保你的环境已经安装nodejs，  启动Websocket服务运行命令 `node server/index.js` , 将会在本地起一个websocket服务 ，监听端口是1229 。 如果想服务后台运行： `nohup node server/index.js > /dev/null &`
+ * 安装服务端`npm install -g socketlog-server` , 运行命令 `socketlog-server` 即可启动服务。 将会在本地起一个websocket服务 ，监听端口是1229 。 如果想服务后台运行： `socketlog-server > /dev/null &`
  * 在自己的程序中发送日志：
 
         <?php

@@ -1,6 +1,6 @@
 {
-  "name": "socketlog",
-  "version": "1.0.0",
+  "name": "socketlog-server",
+  "version": "2.1.2",
   "description": "website debug",
   "main": "index.js",
   "dependencies": {
@@ -9,9 +9,13 @@
   "devDependencies": {
     "nodejs-websocket": "^1.0.0"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+        "socketlog-server": "bin/socketlog-server"
   },
+  "scripts": {
+        "start": "node ."
+  },
+  "preferGlobal": true,
   "author": "luofei614",
   "license": "ISC"
 }
