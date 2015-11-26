@@ -9,6 +9,7 @@ function ws_init()
     if(websocket)
     {
         //避免重复监听
+        websocket.onclose=function(){};//onclose 函数置空，防止重复链接
         websocket.close(); 
     }
     var address=localStorage.getItem('address');
