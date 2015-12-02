@@ -1,6 +1,21 @@
 var ws = require("nodejs-websocket");
 var http = require('http');
+var fs = require('fs');
+var stripJsonComments = require('strip-json-comments');
+function loadJSONFile (file) {
+      var json = fs.readFileSync(file).toString();
+        return JSON.parse(stripJsonComments(json));
+}
 var server = ws.createServer(function (conn) {
+    var config=loadJSONFile('./config.json');
+    if(config.client_verify){
+        //验证client_id
+        var client_id=conn.path.substring(1);
+        if(-1 === config.client_ids.indexOf(client_id)){
+            conn.sendText('close:client_id不允许连接');
+            conn.close();
+        }
+    }
     console.log("New connection");
     conn.on("close", function (code, reason) {
         console.log("Connection closed");

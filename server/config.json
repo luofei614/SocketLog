@@ -1,0 +1,6 @@
+{
+  //是否开启对client_id的验证
+  "client_verify":true, 
+  //能连接服务器的client_id
+  "client_ids":["luofei"]    
+}

@@ -94,7 +94,12 @@ function ws_init()
         }
         catch(e)
         {
-           alert('日志格式错误，'+event.data);
+           if(0==event.data.indexOf('close:')){
+             websocket.onclose=function(){};//onclose 函数置空，防止重复链接
+             alert('此client_id不允许连接服务');
+           }else{
+             alert('日志格式错误，'+event.data);
+           }
            return ; 
         }
         var client_id=localStorage.getItem('client_id');

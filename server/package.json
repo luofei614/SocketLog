@@ -4,16 +4,18 @@
   "description": "website debug",
   "main": "index.js",
   "dependencies": {
-    "nodejs-websocket": "^1.0.0"
+    "nodejs-websocket": "^1.0.0",
+    "strip-json-comments": "^2.0.0"
   },
   "devDependencies": {
-    "nodejs-websocket": "^1.0.0"
+    "nodejs-websocket": "^1.0.0",
+    "strip-json-comments": "^2.0.0"
   },
   "bin": {
-        "socketlog-server": "bin/socketlog-server"
+    "socketlog-server": "bin/socketlog-server"
   },
   "scripts": {
-        "start": "node ."
+    "start": "node ."
   },
   "preferGlobal": true,
   "author": "luofei614",
