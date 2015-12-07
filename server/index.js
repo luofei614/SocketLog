@@ -7,7 +7,7 @@ function loadJSONFile (file) {
         return JSON.parse(stripJsonComments(json));
 }
 var server = ws.createServer(function (conn) {
-    var config=loadJSONFile('./config.json');
+    var config=loadJSONFile(__dirname+'/config.json');
     if(config.client_verify){
         //验证client_id
         var client_id=conn.path.substring(1);
