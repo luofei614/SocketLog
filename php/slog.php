@@ -247,11 +247,6 @@ class Slog
         return self::$_instance;
     }
 
-    protected static function _log($type,$logs,$css='')
-    {
-        self::getInstance()->record($type,$logs,$css);
-    }
-
 
     protected static function check()
     {

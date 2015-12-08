@@ -1,5 +1,5 @@
 <?php
-include './php/SocketLog.class.php';
+include './php/slog.function.php';
 
 //配置
 slog(array(
@@ -9,7 +9,7 @@ slog(array(
 'error_handler'=>false,//是否接管程序错误，将程序错误显示在console中，默认为false
 'force_client_id'=>'',//日志强制记录到配置的client_id,默认为空
 'allow_client_ids'=>array()//限制允许读取日志的client_id，默认为空,表示所有人都可以获得日志。
-),'set_config');
+),'config');
 
 //输出日志
 slog('hello world');  //一般日志
