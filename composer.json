@@ -17,10 +17,5 @@
       "think\\slog\\": "php/"
     }
   },
- "minimum-stability": "dev",
- "extra": {
-        "branch-alias": {
-            "dev-master": "2.2.0"
-        }
-  }
+ "minimum-stability": "dev"
 }
