@@ -1,0 +1,20 @@
+{
+  "name": "luofei614/SocketLog",
+  "description": "debug tool for api , ajax,wechat",
+  "keywords": ["SocketLog", "slog", "api"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "luofei",
+      "email": "upfy@qq.com"
+    }
+  ],
+  "require":{
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "think\\slog\\": "php/"
+    }
+  }
+}
