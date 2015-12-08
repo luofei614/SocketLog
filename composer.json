@@ -3,7 +3,6 @@
   "description": "debug tool for api , ajax,wechat",
   "keywords": ["SocketLog", "slog", "api"],
   "license": "MIT",
-  "minimum-stability":"dev",
   "authors": [
     {
       "name": "luofei",
@@ -18,9 +17,10 @@
       "think\\slog\\": "php/"
     }
   },
+ "minimum-stability": "dev",
  "extra": {
         "branch-alias": {
-            "dev-master": "master"
+            "dev-master": "2.2.0"
         }
   }
 }
