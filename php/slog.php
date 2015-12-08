@@ -3,8 +3,8 @@
  * github: https://github.com/luofei614/SocketLog
  * @author luofei614<weibo.com/luofei614>
  */
-namespace think;
-class slog
+namespace think\org;
+class Slog
 {
     public static $start_time=0;
     public static $start_memory=0;
