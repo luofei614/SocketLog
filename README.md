@@ -21,7 +21,7 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
  * 在自己的程序中发送日志：
 
         <?php
-        include './php/SocketLog.class.php';
+        include './php/slog.function.php';
         slog('hello world');
         ?>
 
@@ -41,22 +41,22 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
  * 第二个参数是日志类型，可选，如果没有指定日志类型默认类型为log， 第三个参数是自定样式，在这里写上你自定义css样式即可。
 
 ##配置
-* 在载入SocketLog.class.php文件后，还可以对SocketLog进行一些配置。
+* 在载入slog.function.php文件后，还可以对SocketLog进行一些配置。
 * 例如：我们如果想将程序的报错信息页输出到console，可以配置
 
         <?php
-        include './php/SocketLog.class.php';
+        include './php/slog.function.php';
         slog(array(
         'error_handler'=>true
-        ),'set_config');
+        ),'config');
         echo notice;//制造一个notice报错
         slog('这里是输出的一般日志');
         ?>
-* 配置SocketLog也是用slog函数， 第一个参数传递配置项的数组，第二个参数设置为set_config
+* 配置SocketLog也是用slog函数， 第一个参数传递配置项的数组，第二个参数设置为config
 * 还支持其他配置项
 
         <?php
-        include './php/SocketLog.class.php';
+        include './php/slog.function.php';
         slog(array(
         'enable'=>true,//是否打印日志的开关
         'host'=>'localhost',//websocket服务器地址，默认localhost
@@ -66,7 +66,7 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
         'force_client_id'=>'',//日志强制记录到配置的client_id,默认为空
         'allow_client_ids'=>array()////限制允许读取日志的client_id，默认为空,表示所有人都可以获得日志。
         )
-        ,'set_config');
+        ,'config');
         ?>
 * optimize 参数如果设置为true， 可以在日志中看见利于优化参数，如：`[运行时间：0.081346035003662s][吞吐率：12.29req/s][内存消耗：346,910.45kb]` 
 * show_included_files 设置为true，能显示出程序运行时加载了哪些文件，比如我们在分析开源程序时，如果不知道模板文件在那里， 往往看一下加载文件列表就知道模板文件在哪里了。
@@ -86,12 +86,41 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
 * 示例代码:
 
         <?php
-        include './php/SocketLog.class.php';
+        include './php/slog.function.php';
         slog(array(
         'force_client_id'=>'luofei_zfH5NbLn'
-        ),'set_config');
+        ),'config');
         slog('test'); `
 
+##支持composer 
+
+ * 使用composer安装命令 `composer require luofei614\socketlog`
+
+ * 直接调用静态方法
+
+        <?php
+        require './vendor/autoload.php';
+        use think\org\Slog
+        //配置socketlog
+        Slog::config(array(
+            'enable'=>true,//是否打印日志的开关
+            'host'=>'localhost',//websocket服务器地址，默认localhost
+            'optimize'=>false,//是否显示利于优化的参数，如果运行时间，消耗内存等，默认为false
+            'show_included_files'=>false,//是否显示本次程序运行加载了哪些文件，默认为false
+            'error_handler'=>false,//是否接管程序错误，将程序错误显示在console中，默认为false
+            'force_client_id'=>'',//日志强制记录到配置的client_id,默认为空
+            'allow_client_ids'=>array()////限制允许读取日志的client_id，默认为空,表示所有人都可以获得日志。
+        ));
+        Slog::log('log');  //一般日志
+        Slog::error('msg'); //错误日志
+        Slog::info('msg'); //信息日志
+        Slog::warn('msg'); //警告日志
+        Slog::trace('msg');// 输入日志同时会打出调用栈
+        Slog::alert('msg');//将日志以alert方式弹出
+        Slog::log('msg','color:red;font-size:20px;');//自定义日志的样式，第三个参数为css样式
+
+##支持ThinkPHP
+    ThinkPHP5后， 在框架层集成了SocketLog ，只需要设置配置即可用
 
 ##对数据库进行调试
   * SocketLog还能对sql语句进行调试，自动对sql语句进行explain分析，显示出有性能问题的sql语句。 如下图所示。 
@@ -136,17 +165,17 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
    有了SocketLog，我们能很方便的分析开源程序，下面以OneThink为例， 大家可以在 http://www.topthink.com/topic/2228.html 下载最新的OneThink程序。 安装好OneThink后，按下面步骤增加SocketLog程序。 
 
  * 将SocketLog.class.php复制到OneThink的程序目录中，你如果没有想好将文件放到哪个子文件夹，暂且放到根目录吧。 
- * 编辑入口文件index.php, 再代码的最前面加载SocketLog.class.php ,并设置SocketLog
+ * 编辑入口文件index.php, 再代码的最前面加载slog.function.php ,并设置SocketLog
 
    
 
         <?php
-            include './SocketLog.class.php';
+            include './slog.function.php';
             slog(array(
              'error_handler'=>true,
              'optimize'=>true,
              'show_included_files'=>true
-            ),'set_config');
+            ),'config');
 
 
  - 编辑ThinkPHP/Library/Think/Db/Driver.class.php 文件，在这个类中的execute 方法为一个执行sql语句的方法，增加代码：
