@@ -1,6 +1,6 @@
 {
   "name": "luofei614/socketlog",
-  "description": "debug tool for api , ajax,wechat",
+  "description": "debug tool for api , ajax,wechat ,version2.2.0",
   "keywords": ["SocketLog", "slog", "api"],
   "license": "MIT",
   "authors": [
