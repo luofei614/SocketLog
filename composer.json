@@ -1,5 +1,5 @@
 {
-  "name": "socketlog",
+  "name": "luofei614/socketlog",
   "description": "debug tool for api , ajax,wechat",
   "keywords": ["SocketLog", "slog", "api"],
   "license": "MIT",
