@@ -17,5 +17,10 @@
     "psr-4": {
       "think\\slog\\": "php/"
     }
+  },
+ "extra": {
+        "branch-alias": {
+            "dev-master": "master"
+        }
   }
 }
