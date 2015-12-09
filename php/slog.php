@@ -154,7 +154,7 @@ class Slog
                 $obj=$pdo->query( "EXPLAIN ".$sql);
                 if(is_object($obj) && method_exists($obj,'fetch'))
                 {
-                    $arr=$obj->fetch(PDO::FETCH_ASSOC);
+                    $arr=$obj->fetch(\PDO::FETCH_ASSOC);
                     self::sqlexplain($arr,$sql,$css);
                 }
             } catch (Exception $e) {
