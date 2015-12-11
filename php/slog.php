@@ -394,7 +394,7 @@ class Slog
         }
         if(self::$start_memory)
         {
-            $memory_use=number_format(memory_get_usage()-self::$start_memory/1024,2);
+            $memory_use=number_format((memory_get_usage()-self::$start_memory)/1024,2);
             $memory_str="[内存消耗：{$memory_use}kb]";
         }
 
