@@ -72,7 +72,7 @@ class Slog
             self::log($log,'font-size:20px;color:red;');
     }
 
-    public static function trace($msg,$trace_level=2,$css='')
+    public static function trace($msg,$trace_level=1,$css='')
     {
         if(!self::check())
         {
