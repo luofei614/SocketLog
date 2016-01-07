@@ -22,7 +22,9 @@ slog('msg','alert');//将日志以alert方式弹出
 slog('msg','log','color:red;font-size:20px;');//自定义日志的样式，第三个参数为css样式
 
 //调试sql
+/*
 $link=mysql_connect( 'localhost:3306' , 'root' , '123456' , true ) ;
 mysql_select_db('kuaijianli',$link);
 $sql="DELETE * FROM `uxxxser`";
 slog($sql,$link);
+ */
