@@ -267,7 +267,7 @@ class Slog
         if(!empty($allow_client_ids))
         {
             //通过数组交集得出授权强制推送的client_id
-            self::$_allowForceClientIds = array_intersect((array)$allow_client_ids, (array)self::getConfig('force_client_ids'));
+            self::$_allowForceClientIds = array_intersect($allow_client_ids, self::getConfig('force_client_ids'));
             if (!$tabid && count(self::$_allowForceClientIds)) {
                 return true;
             }
@@ -277,6 +277,10 @@ class Slog
             {
                 return false;
             }
+        }
+        else
+        {
+            self::$_allowForceClientIds = self::getConfig('force_client_ids');
         }
         return true;
     }
@@ -316,6 +320,10 @@ class Slog
     public static function  config($config)
     {
         $config=array_merge(self::$config,$config);
+        if(isset($config['force_client_id'])){
+            //兼容老配置
+            $config['force_client_ids']=array_merge($config['force_client_ids'],array($config['force_client_id'])); 
+        }
         self::$config=$config;
         if(self::check())
         {
