@@ -10,6 +10,8 @@ class Slog
     public static $start_memory=0;
     public static $port=1116;//SocketLog 服务的http的端口号
     public static $log_types=array('log','info','error','warn','table','group','groupCollapsed','groupEnd','alert');
+    
+    protected static $_allowForceClientIds = array();    //配置强制推送且被授权的client_id
 
     protected static $_instance;
 
@@ -21,7 +23,7 @@ class Slog
         'show_included_files'=>false,
         'error_handler'=>false,
         //日志强制记录到配置的client_id
-        'force_client_id'=>'',
+        'force_client_ids'=>array(),
         //限制允许读取日志的client_id
         'allow_client_ids'=>array()
     );
@@ -256,7 +258,7 @@ class Slog
         }
         $tabid=self::getClientArg('tabid');
          //是否记录日志的检查
-        if(!$tabid && !self::getConfig('force_client_id'))
+        if(!$tabid && !self::getConfig('force_client_ids'))
         {
             return false;
         }
@@ -264,7 +266,9 @@ class Slog
         $allow_client_ids=self::getConfig('allow_client_ids');
         if(!empty($allow_client_ids))
         {
-            if (!$tabid && in_array(self::getConfig('force_client_id'), $allow_client_ids)) {
+            //通过数组交集得出授权强制推送的client_id
+            self::$_allowForceClientIds = array_intersect((array)$allow_client_ids, (array)self::getConfig('force_client_ids'));
+            if (!$tabid && count(self::$_allowForceClientIds)) {
                 return true;
             }
 
@@ -442,20 +446,36 @@ class Slog
         {
             $client_id='';
         }
-        if($force_client_id=self::getConfig('force_client_id'))
+        if(!empty(self::$_allowForceClientIds))
         {
-            $client_id=$force_client_id;
+            //强制推送到多个client_id
+            foreach(self::$_allowForceClientIds as $force_client_id) {
+                $client_id=$force_client_id;
+                self::sendToClient($tabid, $client_id, self::$logs, $force_client_id);
+            }
+        } else {
+            self::sendToClient($tabid, $client_id, self::$logs, '');
         }
-        $logs=array(
+    }
+
+    /**
+     * 发送给指定客户端
+     * @author Zjmainstay
+     * @param $tabid
+     * @param $client_id
+     * @param $logs
+     * @param $force_client_id
+     */
+    protected static function sendToClient($tabid, $client_id, $logs, $force_client_id) {
+         $logs=array(
             'tabid'=>$tabid,
             'client_id'=>$client_id,
-            'logs'=>self::$logs,
+            'logs'=>$logs,
             'force_client_id'=>$force_client_id,
-        );
+        ); 
         $msg=@json_encode($logs);
         $address='/'.$client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
-        self::send(self::getConfig('host'),$msg,$address);
-
+        self::send(self::getConfig('host'),$msg,$address); 
     }
 
     public function __destruct()
