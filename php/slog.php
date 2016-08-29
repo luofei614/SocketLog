@@ -90,13 +90,14 @@ class Slog
             $file=isset($trace['file'])?$trace['file']:'unknown file';
             $line=isset($trace['line'])?$trace['line']:'unknown line';
             $trace_msg='#'.$i.'  '.$fun.' called at ['.$file.':'.$line.']';
-            if(!empty($trace['args'])){
-                self::groupCollapsed($trace_msg);
-                self::log($trace['args']);
-                self::groupEnd();
-            }else{
+            //不输出参数速度会有明显的改善
+            //if(!empty($trace['args'])){
+            //    self::groupCollapsed($trace_msg);
+            //    self::log($trace['args']);
+            //    self::groupEnd();
+            //}else{
                 self::log($trace_msg);
-            }
+            //}
         }
         self::groupEnd();
     }

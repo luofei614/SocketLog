@@ -201,7 +201,7 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
 
 ##About Me
 * Author: @luofei614 新浪微博：http://weibo.com/luofei614
-* 三生社群CTO，ThinkPHP核心开发者之一，待过新浪云计算
+* 优伯立信创始人，ThinkPHP核心开发者之一，待过新浪云计算
 
 
   [1]: https://github.com/luofei614/SocketLog/raw/master/screenshots/discuz.png
