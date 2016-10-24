@@ -95,7 +95,7 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
 
 ##支持composer 
 
- * 使用composer安装命令 `composer require luofei614\socketlog`
+ * 使用composer安装命令 `composer require luofei614/socketlog`
 
  * 直接调用静态方法
 
