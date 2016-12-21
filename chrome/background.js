@@ -14,6 +14,7 @@ function ws_init()
     }
     var address=localStorage.getItem('address');
     var client_id=localStorage.getItem('client_id');
+    var open=localStorage.getItem('open');
     if(!address)
     {
         address="ws://localhost:1229"; 
@@ -23,6 +24,13 @@ function ws_init()
         //client_id作为地址
         address+='/'+client_id;     
     }
+
+    if (open == 'false') {
+        disable_icon();
+        localStorage.setItem('status','close');
+        return false;
+    };
+
     websocket=new WebSocket(address);
 
     websocket.onerror=function(msg)
@@ -144,13 +152,13 @@ function ws_restart()
 
 function enable_icon() {
     chrome.browserAction.setIcon({
-        path: "logo.png"
+        path: "logo16.png"
     });
 }
 
 function disable_icon() {
     chrome.browserAction.setIcon({
-        path: "logo_disabled.png"
+        path: "logo_disabled16.png"
     });
 }
 
