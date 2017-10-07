@@ -49,7 +49,7 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
         include './php/slog.function.php';
         slog(array(
         'error_handler'=>true
-        ),'config');
+        ),'set_config');
         echo notice;//制造一个notice报错
         slog('这里是输出的一般日志');
         ?>
