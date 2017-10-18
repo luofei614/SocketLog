@@ -195,7 +195,7 @@ SocketLog适合Ajax调试和API调试， 举一个常见的场景，用SocketLog
 -  提示：另一种更简单的方法，因为OneThink每次执行完sql语句都会调用$this->debug， 所以我们可以把slog($this->queryStr,$this->_linkID); 直接写在 Db.class.php文件的debug方法中。 这样不管是mysqli还是mysql驱动都有效。
 
 ## 视频教程
- [http://edu.yuantuan.com/course/198](http://edu.yuantuan.com/course/198)
+ [http://edu.normalcoder.com/course/941](http://edu.normalcoder.com/course/941)
 
 感谢猿团的张盛翔（诺墨）提供教程。
 
