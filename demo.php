@@ -10,11 +10,13 @@ slog(array(
     'force_client_ids'    => array(//日志强制记录到配置的client_id,默认为空,client_id必须在allow_client_ids中
         //'client_01',
         //'client_02',
+        'wjc'
     ), 
     'allow_client_ids'    => array(//限制允许读取日志的client_id，默认为空,表示所有人都可以获得日志。
         //'client_01',
         //'client_02',
         //'client_03',
+        'wjc'
     ), 
 ),'config');
 
@@ -27,6 +29,16 @@ slog('msg','warn'); //警告日志
 slog('msg','trace');// 输入日志同时会打出调用栈
 slog('msg','alert');//将日志以alert方式弹出
 slog('msg','log','color:red;font-size:20px;');//自定义日志的样式，第三个参数为css样式
+
+$i=5;
+while($i){
+    $typeArr = ['log','info','error','warn'];
+    $key = array_rand($typeArr,1);
+    echo $i;
+    slog(['hello word'.$i, 1, 2, [1,4,5]], $typeArr[$key]);
+    $i--;
+    sleep(1);   
+}
 
 //调试sql
 /*
