@@ -1,7 +1,11 @@
 {
   "name": "jason-gao/socketlog",
   "description": "debug tool for api , ajax,wechat ,v2.2",
-  "keywords": ["SocketLog", "slog", "api"],
+  "keywords": [
+    "SocketLog",
+    "slog",
+    "api"
+  ],
   "license": "MIT",
   "authors": [
     {
@@ -9,16 +13,21 @@
       "email": "3048789891@qq.com"
     }
   ],
-  "require":{
+  "require": {
     "php": ">=5.4.0"
   },
   "autoload": {
+    "files": [
+      "php/slog.function.php"
+    ],
     "psr-4": {
       "SocketLog\\": "php/"
     }
   },
-  "archive" : {
-     "exclude":["!/php"]  
+  "archive": {
+    "exclude": [
+      "!/php"
+    ]
   },
- "minimum-stability": "dev"
+  "minimum-stability": "dev"
 }
