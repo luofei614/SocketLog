@@ -1,12 +1,12 @@
 {
-  "name": "luofei614/socketlog",
+  "name": "jason-gao/socketlog",
   "description": "debug tool for api , ajax,wechat ,v2.2",
   "keywords": ["SocketLog", "slog", "api"],
   "license": "MIT",
   "authors": [
     {
-      "name": "luofei",
-      "email": "upfy@qq.com"
+      "name": "jason-gao",
+      "email": "3048789891@qq.com"
     }
   ],
   "require":{
@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "think\\org\\": "php/"
+      "SocketLog\\": "php/"
     }
   },
   "archive" : {

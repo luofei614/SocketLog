@@ -1,6 +1,7 @@
 <?php
 require 'slog.php';
-use think\org\Slog;
+use SocketLog\Slog;
+
 function slog($log,$type='log',$css='')
 {
     if(is_string($type))
@@ -10,9 +11,9 @@ function slog($log,$type='log',$css='')
                 return strtoupper($matches[1]);
             },
             $type);
-        if(method_exists('\think\org\Slog',$type) || in_array($type,Slog::$log_types))
+        if(method_exists('\SocketLog\Slog',$type) || in_array($type,Slog::$log_types))
         {
-           return  call_user_func(array('\think\org\Slog',$type),$log,$css);
+           return  call_user_func(array('\SocketLog\Slog',$type),$log,$css);
         }
     }
 
