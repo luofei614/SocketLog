@@ -36,3 +36,7 @@ require __ROOT__.'/vendor/autoload.php';
 
 * 可以开始进行调试了
 
+* 20180212-添加错误级别控制
+    * 默认 define('__ERROR_HANDLE_LEVEL_SOCKETLOG__', E_ALL);
+    * 项目入口文件定义错误级别define('__ERROR_HANDLE_LEVEL_SOCKETLOG__', E_ALL ^ E_WARNING ^E_NOTICE);
+
