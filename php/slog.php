@@ -10,7 +10,7 @@ class Slog
     public static $start_memory=0;
     public static $port=1116;//SocketLog 服务的http的端口号
     public static $log_types=array('log','info','error','warn','table','group','groupCollapsed','groupEnd','alert');
-    
+
     protected static $_allowForceClientIds = array();    //配置强制推送且被授权的client_id
 
     protected static $_instance;
@@ -65,7 +65,7 @@ class Slog
         }
 
         throw new Exception('SocketLog can not support this database link');
-    }    
+    }
 
 
 
@@ -83,6 +83,7 @@ class Slog
         self::groupCollapsed($msg,$css);
         $traces=debug_backtrace(false);
         $traces=array_reverse($traces);
+        $trace_level = $trace_level == '' ? 0 : intval($trace_level);
         $max=count($traces)-$trace_level;
         for($i=0;$i<$max;$i++){
             $trace=$traces[$i];
@@ -323,7 +324,7 @@ class Slog
         $config=array_merge(self::$config,$config);
         if(isset($config['force_client_id'])){
             //兼容老配置
-            $config['force_client_ids']=array_merge($config['force_client_ids'],array($config['force_client_id'])); 
+            $config['force_client_ids']=array_merge($config['force_client_ids'],array($config['force_client_id']));
         }
         self::$config=$config;
         if(self::check())
@@ -481,10 +482,10 @@ class Slog
             'client_id'=>$client_id,
             'logs'=>$logs,
             'force_client_id'=>$force_client_id,
-        ); 
+        );
         $msg=@json_encode($logs);
         $address='/'.$client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
-        self::send(self::getConfig('host'),$msg,$address); 
+        self::send(self::getConfig('host'),$msg,$address);
     }
 
     public function __destruct()
