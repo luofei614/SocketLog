@@ -42,7 +42,7 @@ var httpServer = http.createServer(function(request, response){
      {
         var requestBody = '';
         request.on('data', function(data) {
-            requestBody+=data;       
+            requestBody+=data;
         });
         request.on('end',function(){
             console.log(requestBody);
@@ -57,5 +57,17 @@ var httpServer = http.createServer(function(request, response){
      }
 });
 httpServer.listen(1116);
+
+
+
+//测试服务的申请页面
+var httpServer = http.createServer(function(request, response){
+      var html = fs.readFileSync(__dirname+'/index.html').toString();
+      response.end(html);
+});
+httpServer.listen(8712);
+
+
+
 
 console.log('SocketLog started success');

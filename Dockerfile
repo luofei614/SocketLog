@@ -6,6 +6,6 @@ RUN apt-get update && \
         nodejs &&\
     rm -rf /var/lib/apt/lists/*
 add .  /socketlog
-EXPOSE 1229 1116
+EXPOSE 1229 1116 8712
 WORKDIR /socketlog
 ENTRYPOINT ["nodejs", "/socketlog/server/index.js"]
