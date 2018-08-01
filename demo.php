@@ -35,3 +35,5 @@ mysql_select_db('kuaijianli',$link);
 $sql="DELETE * FROM `uxxxser`";
 slog($sql,$link);
  */
+
+

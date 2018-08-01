@@ -3,7 +3,10 @@
  * github: https://github.com/luofei614/SocketLog
  * @author luofei614<weibo.com/luofei614>
  */
-namespace think\org;
+namespace SocketLog;
+
+if(!defined('__ERROR_HANDLE_LEVEL_SOCKETLOG__'))  define('__ERROR_HANDLE_LEVEL_SOCKETLOG__', E_ALL);
+
 class Slog
 {
     public static $start_time=0;
@@ -210,6 +213,7 @@ class Slog
 
     public static function error_handler($errno, $errstr, $errfile, $errline)
     {
+        if ( ($errno & __ERROR_HANDLE_LEVEL_SOCKETLOG__) !== $errno) return;
         switch($errno){
             case E_WARNING: $severity = 'E_WARNING'; break;
             case E_NOTICE: $severity = 'E_NOTICE'; break;
