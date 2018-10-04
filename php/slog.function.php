@@ -5,7 +5,9 @@ function slog($log,$type='log',$css='')
 {
     if(is_string($type))
     {
-        $type=preg_replace_callback('/_([a-zA-Z])/',create_function('$matches', 'return strtoupper($matches[1]);'),$type);
+        $type=preg_replace_callback('/_([a-zA-Z])/',function($matches){
+            return strtoupper($matches[1]);  
+        } ,$type);
         if(method_exists('\think\org\Slog',$type) || in_array($type,Slog::$log_types))
         {
            return  call_user_func(array('\think\org\Slog',$type),$log,$css);

@@ -398,6 +398,7 @@ class Slog
             return ;
         }
 
+
         $time_str='';
         $memory_str='';
         if(self::$start_time)
