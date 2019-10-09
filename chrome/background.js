@@ -182,29 +182,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         header+="&client_id="+client_id;
 
-        var special_domain=localStorage.getItem('special_domain'); 
-        if(!special_domain)
+        //将Header隐藏在User-Agent中， 不能使用自定义Header了， 不让HTTPS情况下会报不安全
+        for (var i = 0; i < details.requestHeaders.length; ++i) 
         {
-            special_domain='*.sinaapp.com';
-            localStorage.setItem('special_domain',special_domain); 
-        }
-        var exp=url_exp(special_domain);
-        if (exp.test(details.url)) 
-        {
-            //如果是特殊环境域名
-            for (var i = 0; i < details.requestHeaders.length; ++i) 
+            if (details.requestHeaders[i].name === 'User-Agent') 
             {
-                if (details.requestHeaders[i].name === 'User-Agent') 
-                {
-                    //将参数放在User-agent中，兼容SAE的情况
-                    details.requestHeaders[i].value+=" SocketLog("+header+")";
-                    break;
-                }
+                details.requestHeaders[i].value+=" SocketLog("+header+")";
+                break;
             }
-        } 
-        else
-        {
-            details.requestHeaders.push({name:'SocketLog',value:" SocketLog("+header+")"});
         }
 
        return {requestHeaders: details.requestHeaders};
