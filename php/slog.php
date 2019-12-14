@@ -42,7 +42,10 @@ class Slog
         if(in_array($method,self::$log_types))
         {
             array_unshift($args,$method);
-            return call_user_func_array(array(self::getInstance(),'record'),$args);
+            $ret = call_user_func_array(array(self::getInstance(),'record'),$args);
+            self::sendLog();
+            self::$logs=[];
+            return $ret;
         }
     }
 
@@ -491,7 +494,7 @@ class Slog
 
     public function __destruct()
     {
-        self::sendLog();
+        // self::sendLog();
     }
 
 }

@@ -28,6 +28,16 @@ slog('msg','trace');// 输入日志同时会打出调用栈
 slog('msg','alert');//将日志以alert方式弹出
 slog('msg','log','color:red;font-size:20px;');//自定义日志的样式，第三个参数为css样式
 
+$i=5;
+while($i){
+    $typeArr = ['log','info','error','warn'];
+    $key = array_rand($typeArr,1);
+    echo $i;
+    slog(['hello word'.$i, 1, 2, [1,4,5]], $typeArr[$key]);
+    $i--;
+    sleep(1);   
+}
+
 //调试sql
 /*
 $link=mysql_connect( 'localhost:3306' , 'root' , '123456' , true ) ;
