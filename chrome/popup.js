@@ -14,7 +14,12 @@ function init()
     {
         document.getElementById('client_id').value=localStorage.getItem('client_id'); 
     }
+    if(localStorage.getItem('open'))
+    {
+        document.getElementById('open').checked=localStorage.getItem('open') == 'false' ? false:true;
+    }
     var status=localStorage.getItem('status');
+
     if(status)
     {
         var text='';
@@ -44,6 +49,7 @@ function save()
 {
     localStorage.setItem('address',document.getElementById('address').value);
     localStorage.setItem('client_id',document.getElementById('client_id').value);
+    localStorage.setItem('open',document.getElementById('open').checked);
     chrome.extension.getBackgroundPage().ws_restart();
     window.close();
 }
