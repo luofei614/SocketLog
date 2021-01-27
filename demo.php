@@ -10,12 +10,12 @@ slog(array(
     'force_client_ids'    => array(//日志强制记录到配置的client_id,默认为空,client_id必须在allow_client_ids中
         //'client_01',
         //'client_02',
-    ), 
+    ),
     'allow_client_ids'    => array(//限制允许读取日志的client_id，默认为空,表示所有人都可以获得日志。
         //'client_01',
         //'client_02',
         //'client_03',
-    ), 
+    ),
 ),'config');
 
 //输出日志

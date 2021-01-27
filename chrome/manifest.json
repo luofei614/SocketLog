@@ -1,30 +1,37 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "SocketLog",
-  "description": "SocketLog是FirePHP和ChromePHP的替代者，不仅能做ajax调试，还能做API调试。",
-  "version": "2.2.0",
-  "permissions": [ "webRequest","webRequestBlocking", "tabs","notifications", "http://*/*", "https://*/*" ],
-  "content_scripts": [ 
-    {
-      "js": [ "log.js" ],
-      "matches": [ "http://*/*", "https://*/*" ],
-      "run_at": "document_start"
+    "name": "SocketLog",
+    "description": "SocketLog 是 FirePHP 和 ChromePHP 的替代者，不仅能做 ajax 调试，还能做 API 调试。",
+    "version": "2.2.0",
+    "permissions": ["webRequest", "webRequestBlocking", "tabs", "notifications", "http://*/*", "https://*/*"],
+    "content_scripts": [{
+            "js": ["js/log.js"],
+            "matches": ["http://*/*", "https://*/*"],
+            "run_at": "document_start"
+        },
+        {
+            "js": ["js/evn.js"],
+            "matches": ["http://*/*", "https://*/*"],
+            "run_at": "document_start",
+            "all_frames": true
+        }
+    ],
+    "background": {
+        "scripts": ["js/background.js"]
     },
-    {
-      "js": [ "evn.js" ],
-      "matches": [ "http://*/*", "https://*/*" ],
-      "run_at": "document_start",
-      "all_frames":true
+    "options_page": "options.html",
+    "icons": {
+        "16": "images/logo_16.png",
+        "64": "images/logo_64.png",
+        "128": "images/logo_128.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "images/logo_16.png",
+            "64": "images/logo_64.png",
+            "128": "images/logo_128.png"
+        },
+        "default_popup": "popup.html"
     }
-  ],
-  "background":{
-    "scripts":["background.js"]
-   },
-  "options_page": "options.html",
-  "browser_action": {
-    "default_icon": "logo.png",
-    "default_popup": "popup.html"
-  }
-  
 }
