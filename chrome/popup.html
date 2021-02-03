@@ -1,71 +1,193 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="zh-cn">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
-    <meta charset="UTF-8">
-    <title></title>
-    <script src="popup.js"></script>
-    <style>
-         body{
-            margin:0px;
-            padding:4px;
-            font-size:14px;
-            color:#333;
-            width:150px;
-            background:url(bg_off.png);
-         }
-         .wrapper{
-            background:#fff;
-            padding:5px 10px;
-         }
-         .status{
-            font-size:12px;
-            color:#ccc;
-            padding-top:10px;
-         }
-         .title{
-           border-bottom:1px solid #ccc;
-           padding:5px;
-           font-size:14px;
-           font-weight:bold;
-           margin-bottom:10px;
-         }
-         .clearfix{
-         
-         }
-         .clearfix:before,
-         .clearfix:after {
-               display: table;
-                 content: " ";
-         }
 
-         .clearfix:after {
-               clear: both;
-         }
-         .help{
-            position:relative;
-            top:-3px;
-            float:right;
-         }
-         input {
-            width:100%;
-         }
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta charset="UTF-8" />
+    <title></title>
+    <script src="js/popup.js"></script>
+    <style>
+        html,
+        body,
+        div,
+        form,
+        span,
+        input,
+        select,
+        button,
+        a {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0px;
+            padding: 4px;
+            font-size: 14px;
+            color: #333;
+            width: 200px;
+            background: url(bg_off.png);
+        }
+        
+        .wrapper {
+            background: #fff;
+            padding: 5px 10px;
+        }
+        
+        .status {
+            font-size: 12px;
+            color: #ccc;
+            /*background-color: #ccc;*/
+            padding: 5px 0;
+            margin-top: 5px;
+        }
+        
+        .title {
+            border-bottom: 1px solid #ccc;
+            padding: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .clearfix {}
+        
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: " ";
+        }
+        
+        .clearfix:after {
+            clear: both;
+        }
+        
+        .help {
+            position: relative;
+            top: -3px;
+            float: right;
+        }
+        
+        input {
+            width: 100%;
+        }
+        
+        .open {
+            line-height: 40px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .save {
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .mui-switch {
+            width: 36px;
+            height: 24px;
+            position: absolute;
+            top: 5px;
+            right: 0;
+            border: 1px solid #dfdfdf;
+            background-color: #fdfdfd;
+            box-shadow: #dfdfdf 0 0 0 0 inset;
+            border-radius: 10px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            background-clip: content-box;
+            display: inline-block;
+            -webkit-appearance: none;
+            user-select: none;
+            outline: none;
+        }
+        
+        .mui-switch:before {
+            content: "";
+            width: 22px;
+            height: 22px;
+            position: absolute;
+            top: 0px;
+            left: 0;
+            border-radius: 12px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        
+        .mui-switch:checked {
+            border-color: #64bd63;
+            box-shadow: #64bd63 0 0 0 8px inset;
+            background-color: #64bd63;
+        }
+        
+        .mui-switch:checked:before {
+            left: 14px;
+        }
+        
+        .mui-switch.mui-switch-animbg {
+            transition: background-color ease 0.4s;
+        }
+        
+        .mui-switch.mui-switch-animbg:before {
+            transition: left 0.3s;
+        }
+        
+        .mui-switch.mui-switch-animbg:checked {
+            box-shadow: #dfdfdf 0 0 0 0 inset;
+            background-color: #64bd63;
+            transition: border-color 0.4s, background-color ease 0.4s;
+        }
+        
+        .mui-switch.mui-switch-animbg:checked:before {
+            transition: left 0.3s;
+        }
+        
+        .mui-switch.mui-switch-anim {
+            transition: border cubic-bezier(0, 0, 0, 1) 0.4s, box-shadow cubic-bezier(0, 0, 0, 1) 0.4s;
+        }
+        
+        .mui-switch.mui-switch-anim:before {
+            transition: left 0.3s;
+        }
+        
+        .mui-switch.mui-switch-anim:checked {
+            box-shadow: #64bd63 0 0 0 16px inset;
+            background-color: #64bd63;
+            transition: border ease 0.4s, box-shadow ease 0.4s, background-color ease 1.2s;
+        }
+        
+        .mui-switch.mui-switch-anim:checked:before {
+            transition: left 0.3s;
+        }
     </style>
 </head>
+
 <body>
-   <div class="wrapper clearfix">
-   <div class="title">SocketLog 设置</div>
-   <form action="">
-      监听地址： <input type="input" id="address" value="ws://localhost:1229" /> <br />
-      Client_ID： <input type="input" id="client_id"  value="" /> <br />
-      <button type="button" id="save">保 存</button>
-      <div class="status">
-      状态：<span id="status">正在连接...</span>
-      <div class="help">
-        <a href="https://github.com/luofei614/SocketLog" title="帮助" target="_blank"><img width="16" height="16" src="help.png" /></a>
-      </div><!--/help-->
-     </div><!--/status-->
-   </form> 
-   </div>
+    <div class="wrapper clearfix">
+        <div class="title">SocketLog 设置</div>
+        <form action="">
+            监听主机： <input type="input" id="address" value="localhost" /> <br /> 监听协议： <input type="input" id="protocol" value="ws" /> <br /> 监听端口： <input type="input" id="port" value="1229" /> <br /> 监听地址：
+            <input type="input" id="full_address" value="ws://localhost:1229" disabled="" readonly="" /> Client_ID： <input type="input" id="client_id" value="" /> <br />
+            <div class="open">
+                开启：<input id="open" class="mui-switch mui-switch-anim" type="checkbox" />
+            </div>
+            <button type="button" id="save" class="save">保 存</button>
+            <div class="status" id="status-div">
+                状态：<span id="status">正在连接...</span>
+                <div class="help">
+                    <a href="https://github.com/luofei614/SocketLog" title="帮助" target="_blank"><img width="16" height="16" src="help.png" /></a>
+                </div>
+                <!--/help-->
+            </div>
+            <!--/status-->
+        </form>
+    </div>
 </body>
+
 </html>
