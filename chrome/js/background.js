@@ -161,8 +161,7 @@ function ws_init() {
             chrome.tabs.query({ currentWindow: true, active: true },
                 function(tabArray) {
                     if (tabArray && tabArray[0]) {
-                        //延迟保证日志每次都能记录
-                        evt.emit(tabArray[0].id, function(){
+                        //延迟保证日志每次都能记录evt.emit(tabArray[0].id, function(){
                             check_error();
                             chrome.tabs.sendMessage(tabArray[0].id, data.logs);
                         });
@@ -176,8 +175,7 @@ function ws_init() {
             //不是当前用户的日志不显示。
             return;
         }
-        //延迟保证日志每次都能记录
-        evt.emit(parseInt(data.tabid), function(){
+        //延迟保证日志每次都能记录evt.emit(parseInt(data.tabid), function(){
             check_error();
             chrome.tabs.sendMessage(parseInt(data.tabid), data.logs);
         });
@@ -213,6 +211,11 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     function(details) {
         var header = "tabid=" + details.tabId;
         var client_id = localStorage.getItem("client_id");
+        var open = localStorage.getItem("open");
+
+        if(open == 'false' || open == null) {
+            return { requestHeaders: details.requestHeaders };
+        }
 
         if (!client_id) {
             client_id = "";
