@@ -7,6 +7,57 @@ var websocket_timeout = 0;
 var limit_connect = 1;  // 断线重连次数
 var count = 0;  // 重连计数
 
+function Emitter() {
+    this.loggers = [];
+    this.fns_map = {};
+}
+
+Emitter.prototype.emit = function(logger, fn) {
+    if(this.loggers.indexOf(logger) >= 0) {
+        fn();
+    } else {
+        if(!this.fns_map[logger]) {
+            this.fns_map[logger] = [];
+        }
+        this.fns_map[logger].push(fn);
+    }
+};
+
+Emitter.prototype.setLogger = function(logger) {
+    this.loggers.push(logger);
+    if(this.fns_map[logger]) {
+        this.fns_map[logger].forEach(function(fn){fn()});
+    }
+    this.fns_map[logger] = [];
+}
+
+Emitter.prototype.unsetLogger = function(logger) {
+    var loggers = [];
+    this.loggers.forEach(function(value){
+        if(value != logger) {
+            loggers.push(value);
+        }
+    });
+    this.loggers = loggers;
+}
+
+var evt = new Emitter();
+
+chrome.extension.onMessage.addListener(
+    function(method, sender, sendResponse) {
+        switch(method) {
+            case 'setLogger':
+                evt.setLogger(sender.tab.id);
+                break;
+            case 'unsetLogger':
+                evt.unsetLogger(sender.tab.id);
+                break;
+            default:
+               break;
+        }
+    }
+);
+
 function ws_init() {
     if (websocket) {
         //避免重复监听
@@ -103,17 +154,17 @@ function ws_init() {
             return;
         }
         var client_id = localStorage.getItem("client_id");
+
         //判断是否有强制日志
         if (client_id && data.force_client_id == client_id) {
             //将强制日志输出到当前的tab页
             chrome.tabs.query({ currentWindow: true, active: true },
                 function(tabArray) {
                     if (tabArray && tabArray[0]) {
-                        //延迟保证日志每次都能记录
-                        setTimeout(function() {
+                        //延迟保证日志每次都能记录evt.emit(tabArray[0].id, function(){
                             check_error();
                             chrome.tabs.sendMessage(tabArray[0].id, data.logs);
-                        }, 100);
+                        });
                     }
                 }
             );
@@ -124,11 +175,10 @@ function ws_init() {
             //不是当前用户的日志不显示。
             return;
         }
-        //延迟保证日志每次都能记录
-        setTimeout(function() {
+        //延迟保证日志每次都能记录evt.emit(parseInt(data.tabid), function(){
             check_error();
             chrome.tabs.sendMessage(parseInt(data.tabid), data.logs);
-        }, 100);
+        });
     };
 }
 
@@ -161,6 +211,11 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     function(details) {
         var header = "tabid=" + details.tabId;
         var client_id = localStorage.getItem("client_id");
+        var open = localStorage.getItem("open");
+
+        if(open == 'false' || open == null) {
+            return { requestHeaders: details.requestHeaders };
+        }
 
         if (!client_id) {
             client_id = "";

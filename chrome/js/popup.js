@@ -150,7 +150,7 @@ function save() {
         viewStatusNotic(status);
         return false;
     }
-    if (!ipOk || !domainOk) {
+    if (!ipOk && !domainOk) {
         alert('不是合法的 IP 地址或域名');
         var status = 'error';
         viewStatusNotic(status);

@@ -2,6 +2,13 @@
  * github: https://github.com/luofei614/SocketLog
  * @author luofei614<weibo.com/luofei614>
  */
+
+document.addEventListener("DOMContentLoaded", function(){
+    document.body.onbeforeunload = function() {
+        chrome.extension.sendMessage('unsetLogger');
+    }
+}, true);
+
 chrome.extension.onMessage.addListener(
     function(logs) {
         if ("object" != typeof logs) {
@@ -25,3 +32,5 @@ chrome.extension.onMessage.addListener(
         });
     }
 );
+
+chrome.extension.sendMessage('setLogger');
